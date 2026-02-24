@@ -1,0 +1,102 @@
+.calendar-page {
+  display: flex;
+  justify-content: center;
+  background-color: red;
+  height: 100vh;
+  width: 100vw;
+}
+
+.wrapper {
+  width: 1250px;
+  background-color: aliceblue;
+}
+
+#calendar {
+  background-color: beige;
+  height: 75vh;
+  padding: 15px 20px;
+  margin-top: 20px;
+}
+.calendar-header {
+  margin-top: 20px;
+}
+
+.calendarWrapper {
+  margin: 10px 5px;
+}
+
+.calendarDay {
+  margin: 2px;
+  background-color: rgb(226, 218, 218);
+  width: 120px;
+  border: 1px solid black;
+  height: 100px;
+  overflow-y: auto;
+}
+
+.calendarDaysLayout {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  margin: 10px 5px;
+  width: 60%;
+}
+#calendar-list {
+  width: 60%;
+}
+
+.to-circle {
+  width: 10px;
+  border-radius: 50%;
+  height: 10px;
+  color: transparent;
+  flex-shrink: 0;
+}
+
+.day-event-list-wrapper {
+  border: 1px solid black;
+  height: 60vh;
+  margin: 10% 3% 0 3%;
+  width: 100%;
+}
+/* .day-event-list {
+  
+} */
+
+.today {
+  background-color: red;
+}
+
+.no-day {
+  background-color: grey;
+}
+
+.weekDays {
+  color: black;
+  text-align: center;
+}
+
+#modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+}
+#modal {
+  width: 300px;
+  height: 300px;
+  z-index: 1000;
+  background-color: rgb(122, 78, 78);
+}
+
+@media (max-width: 800px) {
+  .calendarWrapper {
+    overflow-x: auto;
+  }
+
+  .calendarDay {
+    overflow-y: auto;
+  }
+}
