@@ -9,6 +9,7 @@ interface Props {
   type?: "edit" | "add";
   fillDate?: string;
 }
+//TODO: HOLD STATE OF SELECTED COLOR IN MODAL
 
 export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   const [isEditing, setEditing] = useState(false);
@@ -18,6 +19,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   const [endDate, setEndDate] = useState(e?.end.slice(0, 10) ?? fillDate ?? "");
   const [title, setTitle] = useState(e?.event);
   const [hideEditBtn, setHideEditBtn] = useState(false);
+  const [color, setColor] = useState("");
 
   const isEdit = type === "edit";
   const isAdd = type === "add";
@@ -74,12 +76,23 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
           event: title,
           start: `${date}T${from}:00`,
           end: `${endDate}T${to}:00`,
-          color: "green",
+          color: color,
         },
       });
     }
     onClose();
   };
+
+  const colors: string[] = [
+    "#FF5733",
+    "#33A1FF",
+    "#33FF57",
+    "#FF33A8",
+    "#FFB533",
+    "#8D33FF",
+    "#33FFF6",
+    "#FFD433",
+  ];
 
   return (
     <>
@@ -115,6 +128,23 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
               />
+              <div className="d-flex flex-row justify-content-center">
+                {colors.map((color, index) => (
+                  <div
+                    key={index}
+                    className="color-pick"
+                    onClick={() => setColor(color)}
+                    style={{
+                      background: color,
+                      height: "25px",
+                      width: "25px",
+                      borderRadius: "50%",
+                      cursor: "pointer",
+                      margin: "5px",
+                    }}
+                  ></div>
+                ))}
+              </div>
 
               <button type="submit">
                 {type === "edit" ? "Uložit" : "Přidat"}

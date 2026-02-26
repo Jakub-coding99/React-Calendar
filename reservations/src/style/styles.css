@@ -499,6 +499,10 @@ body {
   background: #e2e2e2;
 }
 
+.color-pick:active {
+  border: 5px solid rgb(0, 0, 0);
+}
+
 @media (max-width: 800px) {
   .calendarWrapper {
     overflow-x: auto;
