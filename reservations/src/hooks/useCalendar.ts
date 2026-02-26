@@ -33,13 +33,14 @@ export const useCalendar = (initialsEvents: EventType[]) => {
 
   updateClickedDay(initialsEvents, month);
 
-  const getDayData = (day?: number, data?: EventType[]) => {
-    if (Array.isArray(data)) {
-      setEventList(data);
-    }
-    if (typeof day === "number") {
-      setDay(day);
-    }
+  const getDayData = (
+    date: { day: number; month: number; year: number },
+    data?: EventType[],
+  ) => {
+    setDay(date.day);
+    setMonth(date.month);
+    setYear(date.year);
+    setEventList(Array.isArray(data) ? data : []);
   };
 
   const nextDay = () => {
@@ -57,7 +58,7 @@ export const useCalendar = (initialsEvents: EventType[]) => {
         setYear(newYear);
       }
 
-      setEventList(filterEV(newYear, newMonth, newDay, initialsEvents)); // aktualizace eventList
+      setEventList(filterEV(newYear, newMonth, newDay, initialsEvents));
       return newDay;
     });
   };
@@ -114,15 +115,16 @@ export const useCalendar = (initialsEvents: EventType[]) => {
         ev.id === id ? (ev = data.data) : ev,
       );
       setEvent(updatedEvents);
+      console.log(updatedEvents);
 
-      setEventList(filterEV(year, month, day, initialsEvents, updatedEvents));
+      setEventList(filterEV(year, month, day, updatedEvents));
     }
     if (data?.type === "delete") {
       const id = data?.data?.id;
       const updatedEvents = event.filter((ev) => ev.id !== id);
 
       setEvent(updatedEvents);
-      setEventList(filterEV(year, month, day, initialsEvents, updatedEvents));
+      setEventList(filterEV(year, month, day, updatedEvents));
     }
 
     if (data?.type === "add") {

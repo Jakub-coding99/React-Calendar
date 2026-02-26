@@ -1,14 +1,15 @@
 interface Props {
-  children:string
-  onClick() : void
+  children?: React.ReactNode;
+  onClick(): void;
+  className?: string;
 }
 
-
-export const Button = ({children,onClick}:Props) => {
+export const Button = ({ children, onClick, className }: Props) => {
   return (
-      <div>
-          <button onClick = {onClick}>{children}</button>
-      </div>
-      
-  )
-}
+    <div>
+      <button className={className} onClick={onClick}>
+        {children}
+      </button>
+    </div>
+  );
+};

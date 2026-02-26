@@ -30,14 +30,9 @@ export const filterEV = (
   year: number,
   month: number,
   day: number,
-  initialsEvents: EventType[],
-  updatedEvents?: EventType[],
+  events: EventType[],
 ) => {
   const date = formatDateToDT(year, month, day);
 
-  const events = (updatedEvents ?? initialsEvents).filter(
-    (ev) => ev.start.split("T")[0] == date,
-  );
-
-  return events;
+  return events.filter((ev) => ev.start.split("T")[0] === date);
 };

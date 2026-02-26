@@ -48,6 +48,13 @@ export const Calendar = () => {
       id: "5",
       color: "green",
     },
+    {
+      event: "test",
+      start: "2026-01-30T10:00",
+      end: "2026-01-30T11:00",
+      id: "6",
+      color: "green",
+    },
   ];
   const currentDate = new Date();
   const Today = formatDate(currentDate);
@@ -95,76 +102,153 @@ export const Calendar = () => {
 
   const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
 
-  let arr = [];
-  let dayNumber = 0;
+  const eventsByDate: Record<string, typeof event> = {};
 
-  for (let day = 1; day <= 42; day++) {
-    const firstDay = findFirstDay(year, month);
-
-    if (day < firstDay || dayNumber > daysInMonth) {
-      arr.push(<CalendarDay key={day} classVar="no-day" />);
-      continue;
+  event.forEach((ev) => {
+    const date = ev.start.split("T")[0];
+    if (!eventsByDate[date]) {
+      eventsByDate[date] = [];
     }
-    dayNumber++;
+    eventsByDate[date].push(ev);
+  });
 
-    const dateObj = new Date(year, month - 1, dayNumber);
-    const dayStr = `${dateObj.getFullYear()}-${String(
-      dateObj.getMonth() + 1,
-    ).padStart(2, "0")}-${String(dateObj.getDate()).padStart(2, "0")}`;
-    const eventsForDay = event.filter(
-      (ev) => ev.start.split("T")[0] === dayStr,
-    );
+  const findDaysBeforeMonth = (year: number, month: number, type: string) => {
+    if (type == "prev") {
+      month--;
+      if (month == 0) {
+        month = 12;
+        year--;
+      }
+    } else if (type == "next") {
+      month++;
+      if (month == 12) {
+        month = 1;
+        year++;
+      }
+    }
 
+    return {
+      year: year,
+      month: month,
+      daysNumber: type == "prev" ? new Date(year, month, 0).getDate() : 1,
+    };
+  };
+
+  let arr = [];
+
+  let prevMonthData = findDaysBeforeMonth(year, month, "prev");
+  let nextMonthData = findDaysBeforeMonth(year, month, "next");
+
+  let firstDay = findFirstDay(year, month);
+
+  for (let i = firstDay - 1; i > 0; i--) {
+    let prevDays = prevMonthData.daysNumber - i + 1;
     arr.push(
       <CalendarDay
-        classVar={Today === dayStr ? "today" : undefined}
-        key={day}
-        children={dayNumber}
-        events={eventsForDay}
+        events={
+          eventsByDate[
+            `${prevMonthData.year}-${String(prevMonthData.month).padStart(2, "0")}-${String(prevDays).padStart(2, "0")}`
+          ]
+        }
+        key={i}
+        classVar="no-day"
+        date={{
+          day: prevDays,
+          month: prevMonthData.month,
+          year: prevMonthData.year,
+        }}
         onDay={getDayData}
-      />,
+      >
+        {prevDays}
+      </CalendarDay>,
     );
   }
-  console.log(dateInAdd);
+  for (let d = 1; d <= daysInMonth; d++) {
+    arr.push(
+      <CalendarDay
+        events={
+          eventsByDate[
+            `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`
+          ]
+        }
+        date={{ day: d, month, year }}
+        onDay={getDayData}
+        classVar={
+          `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}` !==
+          Today
+            ? undefined
+            : "today"
+        }
+      >
+        {d}
+      </CalendarDay>,
+    );
+  }
+
+  let nextMonthDay = nextMonthData.daysNumber;
+  while (arr.length < 42) {
+    arr.push(
+      <CalendarDay
+        classVar="no-day"
+        events={
+          eventsByDate[
+            `${nextMonthData.year}-${String(nextMonthData.month).padStart(2, "0")}-${String(nextMonthDay).padStart(2, "0")}`
+          ]
+        }
+        onDay={getDayData}
+        date={{
+          day: nextMonthDay,
+          month: nextMonthData.month,
+          year: nextMonthData.year,
+        }}
+      >
+        {nextMonthDay}
+      </CalendarDay>,
+    );
+
+    nextMonthDay++;
+  }
+  console.log(eventList);
   return (
     <>
       <div className="wrapper d-flex flex-row">
-        <div id="calendar">
-          <CalendarHeader
-            month={month}
-            year={year}
-            months={months}
-            inputRef={inputRef}
-            hideInput={hideInput}
-            showInputDate={showInputDate}
-            handlePrevClick={handlePrevClick}
-            handleNextClick={handleNextClick}
-            handleTodayClick={handleTodayClick}
-            AddEventCurrentDay={addEventCurrentDay}
-            setView={setView}
-          />
-          <div className="calendarWrapper">
-            {view == View.list ? (
-              <CalendarList
-                events={listViewEvents(event, month)}
-                onSelectEvent={setSelectedEvent}
-              />
-            ) : (
-              <CalendarGrid arr={arr} />
-            )}
+        <div className="calendar-column">
+          <div className="calendar-wrapper">
+            <CalendarHeader
+              month={month}
+              year={year}
+              months={months}
+              inputRef={inputRef}
+              hideInput={hideInput}
+              showInputDate={showInputDate}
+              handlePrevClick={handlePrevClick}
+              handleNextClick={handleNextClick}
+              handleTodayClick={handleTodayClick}
+              AddEventCurrentDay={addEventCurrentDay}
+              setView={setView}
+            />
+
+            <div className="calendar-body">
+              {view === View.list ? (
+                <CalendarList
+                  events={listViewEvents(event, month)}
+                  onSelectEvent={setSelectedEvent}
+                />
+              ) : (
+                <CalendarGrid arr={arr} />
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="day-event-list-wrapper">
-          <EventList
-            onSelectEvent={setSelectedEvent}
-            events={eventList}
-            eventDate={actualDate(months)}
-            nextDay={nextDay}
-            prevDay={prevDay}
-            addEventCurrentDay={addEventCurrentDay}
-          />
-        </div>
+        <EventList
+          onSelectEvent={setSelectedEvent}
+          events={eventList.length > 0 ? eventList : []}
+          eventDate={actualDate(months)}
+          nextDay={nextDay}
+          prevDay={prevDay}
+          addEventCurrentDay={addEventCurrentDay}
+        />
       </div>
 
       {selectedEvent && (

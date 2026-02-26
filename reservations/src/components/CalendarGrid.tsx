@@ -17,12 +17,14 @@ export const CalendarGrid = ({ arr }: Props) => {
 
   return (
     <>
-      <div className="calendarDaysLayout">
+      <div className="weekDaysWrapper">
         {days.map((day, index) => (
           <div key={index} className="weekDays">
             {day}
           </div>
         ))}
+      </div>
+      <div className="calendarDaysLayout">
         {arr?.map((dayItem, index) => (
           <div key={index} className="calendarDays">
             {dayItem}

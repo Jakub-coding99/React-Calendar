@@ -134,20 +134,25 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
             </div>
           )}
 
-          {isEdit ? (
-            <div>
-              <Button children="smazat" onClick={deleteEvent} />
-              {!hideEditBtn && (
-                <Button children="upravit" onClick={editEvent} />
-              )}
-
-              <Button children="X" onClick={onClose} />
-            </div>
-          ) : (
-            <div>
-              <Button children="X" onClick={onClose} />
-            </div>
-          )}
+          <div className="modal-actions">
+            {isEdit && (
+              <>
+                <Button
+                  className="modal-delete"
+                  children="Smazat"
+                  onClick={deleteEvent}
+                />
+                {!hideEditBtn && (
+                  <Button children="Upravit" onClick={editEvent} />
+                )}
+              </>
+            )}
+            <Button
+              className="modal-close"
+              children="Zavřít"
+              onClick={onClose}
+            />
+          </div>
         </div>
       </div>
     </>

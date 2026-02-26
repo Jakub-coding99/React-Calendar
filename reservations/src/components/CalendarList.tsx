@@ -4,7 +4,7 @@ import type { EventType } from "../types/event";
 interface Props {
   events?: EventType[];
 
-  onSelectEvent: (event: EventType) => void; // nově
+  onSelectEvent: (event: EventType) => void;
 }
 
 export const CalendarList = ({ events, onSelectEvent }: Props) => {
@@ -16,8 +16,8 @@ export const CalendarList = ({ events, onSelectEvent }: Props) => {
             <DayEvent
               key={ev.id}
               events={ev}
-              open={true} // jen pro modal trigger
-              onSelect={() => onSelectEvent(ev)} // tady pošli event parentu
+              onSelect={() => onSelectEvent(ev)}
+              viewForCalendarList={true}
             />
           ))}
         </div>

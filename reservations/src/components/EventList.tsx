@@ -19,14 +19,19 @@ export const EventList = ({
   addEventCurrentDay,
 }: Props) => {
   return (
-    <>
-      <h3>Denní Události</h3>
-      <h5>{eventDate}</h5>
-      <button onClick={prevDay}>pre</button>
-      <button onClick={nextDay}>dal</button>
-      <button onClick={() => addEventCurrentDay?.("adding-from-event-list")}>
-        add
-      </button>
+    <div className="day-event-list-wrapper">
+      <div className="day-event-header">
+        <h3>Denní Události</h3>
+        <h5>{eventDate}</h5>
+      </div>
+
+      <div className="day-event-nav">
+        <button onClick={prevDay}>Předchozí</button>
+        <button onClick={nextDay}>Další</button>
+        <button onClick={() => addEventCurrentDay?.("adding-from-event-list")}>
+          Přidat
+        </button>
+      </div>
 
       <div className="day-event-list">
         {events?.map((event, index) => (
@@ -34,10 +39,12 @@ export const EventList = ({
             events={event}
             key={index}
             onSelect={() => onSelectEvent(event)}
-            open={true}
           />
         ))}
+        {events?.length === 0 && (
+          <p className="no-events-text">Žádné události</p>
+        )}
       </div>
-    </>
+    </div>
   );
 };
