@@ -10,3 +10,9 @@ export enum View {
   month = "month",
   list = "list",
 }
+
+export interface ModalState {
+  event?: EventType;
+  action: "add" | "edit" | "show";
+  fillData?: string;
+}

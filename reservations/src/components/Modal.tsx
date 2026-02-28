@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "./Button";
 import type { EventType } from "../types/event";
+import { Alert } from "./Alert";
+import { useDeleteEvent } from "../utils/eventActions";
 
 interface Props {
   e?: EventType;
   onChange: (d: any) => void;
   onClose: () => void;
-  type?: "edit" | "add";
+  type?: "edit" | "add" | "show";
   fillDate?: string;
 }
-//TODO: HOLD STATE OF SELECTED COLOR IN MODAL
 
 export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   const [date, setDate] = useState(e?.start.slice(0, 10) ?? fillDate ?? "");
@@ -22,6 +23,14 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
 
   const isEdit = type === "edit";
   const isAdd = type === "add";
+  const isShow = type === "show";
+
+  const { showAlert, handleDelete, triggerDelete, setShowAlert } =
+    useDeleteEvent({
+      e: e!,
+      onChange,
+      onClose,
+    });
 
   useEffect(() => {
     if (e) {
@@ -33,17 +42,16 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
     }
   }, [e, fillDate]);
 
-  const deleteEvent = () => {
-    const toDeleteEvent = {
-      type: "delete",
-      data: {
-        id: e?.id,
-      },
-    };
-
-    onChange(toDeleteEvent);
-    onClose();
-  };
+  // const handleDelete = () => {
+  //   const toDeleteEvent = {
+  //     type: "delete",
+  //     data: {
+  //       id: e?.id,
+  //     },
+  //   };
+  //   onChange(toDeleteEvent);
+  //   onClose();
+  // };
 
   const submitEvent = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
@@ -142,14 +150,40 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
               </button>
             </form>
           )}
-
+          {isShow && (
+            <div className="modal-show-details">
+              <h2>{e?.event}</h2>
+              <p>Od: {e?.start}</p>
+              <p>Do: {e?.end}</p>
+              <p>Barva: {e?.color}</p>
+              <Button
+                className="modal-edit"
+                children="Editovat"
+                onClick={() => {
+                  onChange({ type: "switchToEdit", data: e });
+                }}
+              />
+              <Button
+                className="modal-delete"
+                children="smazat"
+                onClick={triggerDelete}
+              />
+            </div>
+          )}{" "}
+          {showAlert && (
+            <Alert
+              confirm={handleDelete}
+              close={() => setShowAlert(false)}
+              children="Opravdu chcete událost smazat?"
+            />
+          )}
           <div className="modal-actions">
             {isEdit && (
               <>
                 <Button
                   className="modal-delete"
                   children="Smazat"
-                  onClick={deleteEvent}
+                  onClick={triggerDelete}
                 />
               </>
             )}

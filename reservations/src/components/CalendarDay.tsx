@@ -4,8 +4,10 @@ import type { EventType } from "../types/event";
 interface Props {
   children?: number;
   events?: EventType[];
+  showSelectedEvent?: (e: EventType) => void;
   classVar?: string;
   date: { day: number; month: number; year: number };
+  onSelectEvent?: (event: EventType) => void;
   onDay?: (
     date: { day: number; month: number; year: number },
     events?: EventType[],
@@ -18,12 +20,13 @@ export const CalendarDay = ({
   classVar,
   onDay,
   date,
+  showSelectedEvent,
 }: Props) => {
   const totalEvents = events?.length ?? 0;
 
   return (
     <div
-      onClick={() => date && onDay?.(date, events)}
+      onClick={() => onDay?.(date, events)}
       className={"d-flex flex-column calendarDay " + classVar}
     >
       <div className={`day-num ${classVar === "today" ? "today-num" : ""}`}>
@@ -44,8 +47,8 @@ export const CalendarDay = ({
                 key={index}
                 events={ev}
                 totalEvents={totalEvents}
-                onSelect={() => onDay?.(date, events)}
                 className="month-grid-event"
+                showSelectedEvent={() => showSelectedEvent?.(ev)}
               />
             ))
           : null}

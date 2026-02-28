@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import type { EventType } from "../types/event";
+import type { EventType, ModalState } from "../types/event";
 import { View } from "../types/event";
 import { updateClickedDay } from "../utils/events";
 import { filterEV, defaultToday } from "../utils/events";
@@ -7,30 +7,34 @@ import { filterEV, defaultToday } from "../utils/events";
 // EDIT EVENT FUNCTIONS
 export const useCalendar = (initialsEvents: EventType[]) => {
   const currentDate = new Date();
+  const [modalState, setModalState] = useState<ModalState | null>(null);
 
   const [month, setMonth] = useState(currentDate.getMonth() + 1);
   const [year, setYear] = useState(currentDate.getFullYear());
   const [event, setEvent] = useState(initialsEvents);
   const [view, setView] = useState<View>(View.month);
+
   const [eventList, setEventList] = useState<EventType[]>(
     defaultToday(initialsEvents, currentDate),
   );
   const [day, setDay] = useState(currentDate.getDate());
   const [addEvent, setAddEvent] = useState(false);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const d = (y: number, m: number) => new Date(y, m, 0).getDate();
   const daysInMonth = d(year, month);
-  const [dateInAdd, setDateinAdd] = useState(false);
+  // const [dateInAdd, setDateinAdd] = useState(false);
 
   const addEventCurrentDay = (info?: string) => {
-    setDateinAdd(false);
-    if (info == "adding-from-event-list") {
-      setDateinAdd(true);
+    // const today = new Date();
+    let fillDate: string | undefined;
+
+    if (info === "adding-from-event-list") {
+      fillDate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     }
 
-    setAddEvent(true);
+    setModalState({ action: "add", fillData: fillDate });
   };
-
   updateClickedDay(initialsEvents, month);
 
   const getDayData = (
@@ -88,11 +92,19 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     return date;
   };
 
+  const [animate, setAnimate] = useState("");
+
   const handleNextClick = () => {
     if (month == 12) {
       setMonth(1);
       setYear((prev) => prev + 1);
     } else setMonth((prev) => prev + 1);
+
+    setAnimate("slide-left"); // spustíme animaci
+    setTimeout(() => {
+      setAnimate(""); // po animaci odstraníme třídu
+      // sem dej funkci pro změnu měsíce/dne
+    }, 300); // délka animace v ms
   };
 
   const handlePrevClick = () => {
@@ -100,13 +112,20 @@ export const useCalendar = (initialsEvents: EventType[]) => {
       setMonth(12);
       setYear((prev) => prev - 1);
     } else setMonth((prev) => prev - 1);
+    setAnimate("slide-right");
+    setTimeout(() => {
+      setAnimate("");
+    }, 300);
   };
-
   const handleTodayClick = () => {
     setMonth(currentDate.getMonth() + 1);
     setYear(currentDate.getFullYear());
     setEventList(defaultToday(initialsEvents, currentDate));
     setDay(currentDate.getDate());
+    setAnimate("anime-today");
+    setTimeout(() => {
+      setAnimate("");
+    }, 300);
   };
 
   const handleChange = (data?: any) => {
@@ -132,6 +151,10 @@ export const useCalendar = (initialsEvents: EventType[]) => {
       const newEvents = [...event, newEvent];
       setEvent(newEvents);
       setEventList(filterEV(year, month, day, newEvents));
+    }
+
+    if (data?.type == "switchToEdit") {
+      setModalState({ event: data.data, action: "edit" });
     }
   };
   const hideInput = () => {
@@ -167,6 +190,8 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     addEvent,
     addEventCurrentDay,
     setAddEvent,
-    dateInAdd,
+    setModalState,
+    modalState,
+    animate,
   };
 };

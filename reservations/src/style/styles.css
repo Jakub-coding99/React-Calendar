@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 * {
   margin: 0;
   padding: 0;
@@ -5,9 +7,15 @@
 }
 
 html,
+body,
+#root {
+  font-family: "Inter", sans-serif;
+}
+
+html,
 body {
   height: 100%;
-  background-color: black !important;
+  background-color: black;
 }
 
 .calendar-page {
@@ -39,30 +47,34 @@ body {
 }
 
 .weekDaysContainer {
-  border-bottom: 1px solid black;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
-.weekDaysWrapperSpan {
+/* .weekDaysWrapperSpan {
   background: rgb(205, 30, 30);
   width: 100%;
   grid-row: 1;
   grid-column: 2;
-}
+} */
 
 .weekDaysWrapper {
-  border-bottom: 2px black;
   display: grid;
 
   grid-template-columns: repeat(7, 1fr);
   grid-row: 1;
   background-color: rgb(255, 255, 255);
+  width: 100%;
+  gap: 0;
+  height: 30px;
 }
 
 .calendar-body-left {
   grid-column: 1;
   grid-row: 2;
   width: 100%;
+  border-left: 0.5px solid rgb(224, 224, 224);
+  border-right: 0.5px solid rgb(224, 224, 224);
+  padding-top: 30px;
 }
 .calendar-body-right {
   grid-column: 2;
@@ -87,6 +99,7 @@ body {
   width: 100%;
   height: 10vh;
   background-color: rgb(255, 255, 255);
+  border-bottom: 0.5px solid black;
 }
 
 .calendar-header {
@@ -245,23 +258,31 @@ body {
 }
 
 .calendarDay {
-  background-color: #ededf1;
-  width: 135px;
+  background-color: #ffffff;
+  width: 100%;
   height: 135px;
   overflow-y: hidden;
-  border: 0.5px solid rgb(193, 186, 186);
-
-  /* border-radius: 20px;  */
+  border: 0.5px solid rgb(214, 214, 214);
+}
+.calendarDay:hover {
+  cursor: pointer;
+  background-color: rgb(192, 189, 189);
 }
 
 .day-num {
-  text-align: center;
-  margin-top: 3px;
+  text-align: left;
+  margin-top: 5px;
+  margin-left: 5px;
   font-weight: bold;
 }
 
+.calendarDay.today {
+  background-color: #b6d1ef;
+  border: 2px solid rgb(58, 72, 197);
+}
+
 .today-num {
-  background-color: green;
+  background-color: rgb(58, 72, 197);
   color: white;
   width: 28px;
   height: 28px;
@@ -286,6 +307,56 @@ body {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
 }
+
+.calendar-body-left {
+  overflow: hidden;
+  position: relative;
+}
+
+.anime-today {
+  /* transform: translateY(-20px); */
+  animation: animeToday 0.5s ease-in-out forwards;
+}
+
+.slide-left {
+  animation: slideLeft 0.3s ease forwards;
+}
+
+.slide-right {
+  animation: slideRight 0.3s ease forwards;
+}
+
+@keyframes animeToday {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeft {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+@keyframes slideRight {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
 #calendar-list {
   width: 100%;
 }
@@ -438,6 +509,11 @@ body {
   width: 100%;
   align-items: center;
 }
+.month-grid-event:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
 
 .month-grid-event-dotted {
   width: 20px;
@@ -445,6 +521,11 @@ body {
   border-radius: 50%;
   margin: 2px;
   flex-shrink: 0;
+}
+
+.month-grid-event-dotted:hover {
+  transform: translateY(-10px);
+  transition: transform 0.2s ease;
 }
 
 /* Text eventu */
@@ -460,16 +541,18 @@ body {
   background-color: grey;
 }
 .weekDaysWrapper {
-  border-bottom: 2pxrgb (174, 174, 174) id black;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
 }
 
 .weekDays {
-  color: black;
+  color: rgb(73, 72, 72);
   text-align: center;
-  font-weight: bold;
+
   margin: 15px 0;
+  padding: 5px;
+  border: 0.5px solid rgb(224, 224, 224);
+  border-radius: 5px;
 }
 
 /* Overlay */

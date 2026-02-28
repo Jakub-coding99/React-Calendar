@@ -3,7 +3,7 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import type { EventType } from "../types/event";
 import { formatToPrettyDate } from "../utils/date";
 import { Alert } from "../components/Alert";
-import { useState } from "react";
+import { useDeleteEvent } from "../utils/eventActions";
 import { MdNotes } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
 
@@ -12,6 +12,7 @@ interface Props {
   totalEvents?: number;
   onSelect?: () => void;
   className?: string;
+  showSelectedEvent?: (e: EventType) => void;
   deleteEvent?: (data: Object) => void;
 }
 
@@ -20,9 +21,11 @@ export const DayEvent = ({
   totalEvents = 1,
   onSelect,
   className,
+  showSelectedEvent,
   deleteEvent,
 }: Props) => {
-  const openModal = () => {
+  const openModal = (e: React.MouseEvent) => {
+    e.stopPropagation();
     onSelect?.();
   };
 
@@ -33,24 +36,25 @@ export const DayEvent = ({
 
   const startDate = events.start.split("T")[0];
   const endDate = events.end.split("T")[0];
-  const [showAlert, setShowAlert] = useState(false);
+
+  const { showAlert, handleDelete, triggerDelete, setShowAlert } =
+    useDeleteEvent({
+      e: events,
+      onChange: deleteEvent!,
+    });
 
   const isDouble = totalEvents <= 3;
-
-  const handleDelete = () => {
-    deleteEvent?.({
-      type: "delete",
-      data: {
-        id: events.id,
-      },
-    });
-  };
 
   if (!isDouble && className == "month-grid-event") {
     return (
       <div
         className="month-grid-event-dotted"
-        onClick={openModal}
+        onClick={(e) => {
+          e.stopPropagation();
+          {
+            showSelectedEvent?.(events);
+          }
+        }}
         style={{
           backgroundColor: events.color,
         }}
@@ -60,6 +64,13 @@ export const DayEvent = ({
 
   return (
     <>
+      {showAlert && (
+        <Alert
+          confirm={handleDelete}
+          close={() => setShowAlert(false)}
+          children="Opravdu chcete událost smazat?"
+        />
+      )}
       {className == "event-list-view" ? (
         <div
           className="event-list-view"
@@ -75,20 +86,10 @@ export const DayEvent = ({
               <button className="icon-btn" onClick={openModal}>
                 <FaEdit />
               </button>
-              <button
-                className="icon-btn delete"
-                onClick={() => setShowAlert(true)}
-              >
+              <button className="icon-btn delete" onClick={triggerDelete}>
                 <RiDeleteBin6Line />
               </button>
             </div>
-            {showAlert && (
-              <Alert
-                confirm={handleDelete}
-                children="Opravdu chcete událost smazat?"
-                close={() => setShowAlert(false)}
-              />
-            )}
           </div>
 
           {startDate == endDate ? (
@@ -122,7 +123,12 @@ export const DayEvent = ({
 
       {className == "month-grid-event" ? (
         <div
-          // onClick={openModal}
+          onClick={(e) => {
+            e.stopPropagation();
+            {
+              showSelectedEvent?.(events);
+            }
+          }}
           className="month-grid-event"
           style={{
             backgroundColor: events.color,

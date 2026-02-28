@@ -11,7 +11,6 @@ import {
 import { listViewEvents } from "../utils/events";
 import { View } from "../types/event";
 import { useCalendar } from "../hooks/useCalendar";
-import { useState } from "react";
 import { Modal } from "./Modal";
 import type { EventType } from "../types/event";
 import { CalendarHeader } from "./CalendarHeader";
@@ -84,13 +83,22 @@ export const Calendar = () => {
     actualDate,
     daysInMonth,
     day,
-    addEvent,
-    setAddEvent,
-    addEventCurrentDay,
-    dateInAdd,
+    modalState,
+    setModalState,
+    animate,
   } = useCalendar(mockedEvents);
 
-  const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
+  const openAddModal = (fillData?: string) => {
+    setModalState({ action: "add", fillData });
+  };
+
+  const openEditModal = (event: EventType) => {
+    setModalState({ action: "edit", event });
+  };
+
+  const openShowModal = (event: EventType) => {
+    setModalState({ action: "show", event });
+  };
 
   const eventsByDate: Record<string, typeof event> = {};
 
@@ -148,6 +156,7 @@ export const Calendar = () => {
           year: prevMonthData.year,
         }}
         onDay={getDayData}
+        showSelectedEvent={openShowModal}
       >
         {prevDays}
       </CalendarDay>,
@@ -169,6 +178,7 @@ export const Calendar = () => {
             ? undefined
             : "today"
         }
+        showSelectedEvent={openShowModal}
       >
         {d}
       </CalendarDay>,
@@ -191,6 +201,7 @@ export const Calendar = () => {
           month: nextMonthData.month,
           year: nextMonthData.year,
         }}
+        showSelectedEvent={openShowModal}
       >
         {nextMonthDay}
       </CalendarDay>,
@@ -199,15 +210,7 @@ export const Calendar = () => {
     nextMonthDay++;
   }
 
-  const days = [
-    "Pondělí",
-    "Úterý",
-    "Středa",
-    "Čtvrtek",
-    "Pátek",
-    "Sobota",
-    "Neděle",
-  ];
+  const days = ["PO", "ÚT", "ST", "ČT", "PÁ", "SO", "NE"];
 
   return (
     <>
@@ -223,7 +226,7 @@ export const Calendar = () => {
             handlePrevClick={handlePrevClick}
             handleNextClick={handleNextClick}
             handleTodayClick={handleTodayClick}
-            AddEventCurrentDay={addEventCurrentDay}
+            AddEventCurrentDay={openAddModal}
             setView={setView}
           />
         </div>
@@ -243,12 +246,12 @@ export const Calendar = () => {
               </div>
             ) : undefined}
 
-            <div className="calendar-body-left">
+            <div className={`calendar-body-left ${animate}`}>
               <div className="">
                 {view === View.list ? (
                   <CalendarList
                     events={listViewEvents(event, month)}
-                    onSelectEvent={setSelectedEvent}
+                    onSelectEvent={openEditModal}
                   />
                 ) : (
                   <CalendarGrid arr={arr} />
@@ -257,12 +260,14 @@ export const Calendar = () => {
             </div>
             <div className="calendar-body-right">
               <EventList
-                onSelectEvent={setSelectedEvent}
+                onSelectEvent={openEditModal}
                 events={eventList.length > 0 ? eventList : []}
                 eventDate={actualDate(months)}
                 nextDay={nextDay}
                 prevDay={prevDay}
-                addEventCurrentDay={addEventCurrentDay}
+                addEventCurrentDay={() =>
+                  openAddModal(formatDateToDT(year, month, day))
+                }
                 deleteEvent={handleChange}
               />
             </div>
@@ -270,29 +275,15 @@ export const Calendar = () => {
         </div>
       </div>
 
-      {selectedEvent && (
-        <div id="modal-overlay" onClick={() => setSelectedEvent(null)}>
+      {modalState && (
+        <div id="modal-overlay" onClick={() => setModalState(null)}>
           <div onClick={(e) => e.stopPropagation()}>
             <Modal
-              e={selectedEvent}
+              e={modalState.event}
               onChange={handleChange}
-              onClose={() => setSelectedEvent(null)}
-              type="edit"
-            />
-          </div>
-        </div>
-      )}
-
-      {addEvent && (
-        <div id="modal-overlay" onClick={() => setAddEvent(false)}>
-          <div onClick={(e) => e.stopPropagation()}>
-            <Modal
-              onChange={handleChange}
-              onClose={() => setAddEvent(false)}
-              type="add"
-              fillDate={
-                dateInAdd ? formatDateToDT(year, month, day) : undefined
-              }
+              onClose={() => setModalState(null)}
+              type={modalState.action}
+              fillDate={modalState.fillData}
             />
           </div>
         </div>
