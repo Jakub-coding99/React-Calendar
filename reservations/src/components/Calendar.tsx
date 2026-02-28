@@ -23,7 +23,12 @@ export const Calendar = () => {
       end: "2026-02-02T11:00",
       id: "1",
       color: "red",
+      note: `jojojojjjjjjjjjjjjjjjjjjjmm mmm
+      "mmmmmm
+      "modalStatem"
+      "modalStatemjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj`,
     },
+    ,
     {
       event: "Melír",
       start: "2026-02-03T10:00",

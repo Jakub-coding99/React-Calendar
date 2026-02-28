@@ -4,6 +4,7 @@ export interface EventType {
   end: string;
   id: string;
   color: string;
+  note?: string;
 }
 
 export enum View {

@@ -3,9 +3,16 @@ import { Button } from "./Button";
 import type { EventType } from "../types/event";
 import { Alert } from "./Alert";
 import { useDeleteEvent } from "../utils/eventActions";
+import { FaEdit } from "react-icons/fa";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { IoMdClose } from "react-icons/io";
+import { HiOutlineCalendarDateRange } from "react-icons/hi2";
+import { formatToPrettyDate } from "../utils/date";
+import { TbClockHour4 } from "react-icons/tb";
+import { MdNotes } from "react-icons/md";
 
 interface Props {
-  e?: EventType;
+  e: EventType;
   onChange: (d: any) => void;
   onClose: () => void;
   type?: "edit" | "add" | "show";
@@ -41,17 +48,6 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
       setTo(e.end?.slice(11, 16) ?? "10:00");
     }
   }, [e, fillDate]);
-
-  // const handleDelete = () => {
-  //   const toDeleteEvent = {
-  //     type: "delete",
-  //     data: {
-  //       id: e?.id,
-  //     },
-  //   };
-  //   onChange(toDeleteEvent);
-  //   onClose();
-  // };
 
   const submitEvent = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
@@ -151,25 +147,87 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
             </form>
           )}
           {isShow && (
-            <div className="modal-show-details">
-              <h2>{e?.event}</h2>
-              <p>Od: {e?.start}</p>
-              <p>Do: {e?.end}</p>
-              <p>Barva: {e?.color}</p>
-              <Button
-                className="modal-edit"
-                children="Editovat"
-                onClick={() => {
-                  onChange({ type: "switchToEdit", data: e });
-                }}
-              />
-              <Button
-                className="modal-delete"
-                children="smazat"
-                onClick={triggerDelete}
-              />
+            <div className="d-flex flex-column gap-4">
+              <div className="modal-header-show d-flex flex-row d-flex justify-content-between align-items-center  w-100">
+                <div
+                  className="header-dot"
+                  style={{
+                    width: "25px",
+                    height: "25px",
+                    borderRadius: "50%",
+                    background: e?.color,
+                  }}
+                ></div>
+
+                <div className="d-flex flex-row ms-auto">
+                  <Button
+                    className="icon-btn"
+                    onClick={() => {
+                      onChange({ type: "switchToEdit", data: e });
+                    }}
+                  >
+                    <FaEdit />
+                  </Button>
+                  <Button className="icon-btn delete" onClick={triggerDelete}>
+                    <RiDeleteBin6Line />
+                  </Button>
+                  <Button className="icon-btn" onClick={onClose}>
+                    <IoMdClose />
+                  </Button>
+                </div>
+
+                <div></div>
+              </div>
+              <div className="modal-show-details">
+                <h2 className="fw-bold my-3">{e?.event}</h2>
+                <span className="d-flex flex-row gap-2 my-3">
+                  <HiOutlineCalendarDateRange size={28} />
+                  <p>
+                    {e.start.split("T")[0] === e.end.split("T")[0]
+                      ? formatToPrettyDate(e.start.split("T")[0])
+                      : `${formatToPrettyDate(e.start.split("T")[0])} - ${formatToPrettyDate(e.end.split("T")[0])}`}
+                  </p>
+                </span>
+                <span className="d-flex flex-row gap-2 my-3">
+                  <TbClockHour4 size={28} />
+                  <p>
+                    {e.start.split("T")[1]} - {e.end.split("T")[1]}
+                  </p>
+                </span>
+
+                {e.note != undefined ? (
+                  <div className="d-flex flex-column">
+                    <span className="d-flex flex-row gap-2">
+                      <MdNotes size={28} />
+                      <p className="m-0">Poznámky</p>
+                    </span>
+
+                    <div
+                      style={{
+                        height: "20%",
+
+                        overflowY: "auto",
+                        overflowX: "hidden",
+                      }}
+                    >
+                      <p
+                        style={{
+                          background: "whiteSmoke",
+                          borderRadius: "8px",
+                          overflowY: "auto",
+                          overflowX: "hidden",
+                          padding: "8px",
+                        }}
+                      >
+                        {e.note}
+                      </p>
+                    </div>
+                  </div>
+                ) : undefined}
+              </div>
             </div>
-          )}{" "}
+          )}
+
           {showAlert && (
             <Alert
               confirm={handleDelete}
