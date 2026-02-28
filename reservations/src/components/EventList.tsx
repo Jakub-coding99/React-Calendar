@@ -8,6 +8,7 @@ interface Props {
   addEventCurrentDay?: (info?: string) => void;
   eventDate: string;
   onSelectEvent: (event: EventType) => void;
+  deleteEvent?: () => void;
 }
 
 export const EventList = ({
@@ -17,6 +18,7 @@ export const EventList = ({
   prevDay,
   onSelectEvent,
   addEventCurrentDay,
+  deleteEvent,
 }: Props) => {
   return (
     <div className="day-event-list-wrapper">
@@ -39,6 +41,8 @@ export const EventList = ({
             events={event}
             key={index}
             onSelect={() => onSelectEvent(event)}
+            className="event-list-view"
+            deleteEvent={deleteEvent}
           />
         ))}
         {events?.length === 0 && (

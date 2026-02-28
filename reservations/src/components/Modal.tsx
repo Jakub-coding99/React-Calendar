@@ -12,14 +12,13 @@ interface Props {
 //TODO: HOLD STATE OF SELECTED COLOR IN MODAL
 
 export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
-  const [isEditing, setEditing] = useState(false);
   const [date, setDate] = useState(e?.start.slice(0, 10) ?? fillDate ?? "");
   const [from, setFrom] = useState(e?.start.slice(11, 16) ?? "09:00");
   const [to, setTo] = useState(e?.end.slice(11, 16) ?? "10:00");
   const [endDate, setEndDate] = useState(e?.end.slice(0, 10) ?? fillDate ?? "");
   const [title, setTitle] = useState(e?.event);
-  const [hideEditBtn, setHideEditBtn] = useState(false);
-  const [color, setColor] = useState("");
+
+  const [eventColor, setEventColor] = useState("");
 
   const isEdit = type === "edit";
   const isAdd = type === "add";
@@ -46,11 +45,6 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
     onClose();
   };
 
-  const editEvent = () => {
-    setEditing(true);
-    setHideEditBtn(true);
-  };
-
   const submitEvent = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
     if (type == "edit") {
@@ -65,7 +59,6 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
         },
       });
 
-      setEditing(false);
       onClose();
     }
     if (type == "add") {
@@ -76,7 +69,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
           event: title,
           start: `${date}T${from}:00`,
           end: `${endDate}T${to}:00`,
-          color: color,
+          color: colors.includes(eventColor) ? eventColor : "#6594B1",
         },
       });
     }
@@ -84,21 +77,20 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   };
 
   const colors: string[] = [
-    "#FF5733",
-    "#33A1FF",
-    "#33FF57",
-    "#FF33A8",
-    "#FFB533",
-    "#8D33FF",
-    "#33FFF6",
-    "#FFD433",
+    "#EA7B7B",
+    "#6594B1",
+    "#84B179",
+    "#213C51",
+    "#D25353",
+    "#FACE68",
+    "#898AC4",
   ];
 
   return (
     <>
       <div id="modal">
         <div className="d-flex flex-column justify-content-center">
-          {((isEdit && isEditing) || isAdd) && (
+          {(isEdit || isAdd) && (
             <form onSubmit={submitEvent}>
               <input
                 type="text"
@@ -111,6 +103,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
+                placeholder="date"
               />
               <input
                 type="time"
@@ -132,15 +125,13 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                 {colors.map((color, index) => (
                   <div
                     key={index}
-                    className="color-pick"
-                    onClick={() => setColor(color)}
+                    className={
+                      color == eventColor ? "color-pick choosen" : "color-pick"
+                    }
+                    onClick={() => setEventColor(color)}
                     style={{
                       background: color,
-                      height: "25px",
-                      width: "25px",
-                      borderRadius: "50%",
-                      cursor: "pointer",
-                      margin: "5px",
+                      color: color,
                     }}
                   ></div>
                 ))}
@@ -152,18 +143,6 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
             </form>
           )}
 
-          {isEdit && !isEditing && (
-            <div>
-              <p>{title}</p>
-              <p>
-                začátek: {date} {from}
-              </p>
-              <p>
-                konec: {endDate} {to}
-              </p>
-            </div>
-          )}
-
           <div className="modal-actions">
             {isEdit && (
               <>
@@ -172,9 +151,6 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                   children="Smazat"
                   onClick={deleteEvent}
                 />
-                {!hideEditBtn && (
-                  <Button children="Upravit" onClick={editEvent} />
-                )}
               </>
             )}
             <Button

@@ -2,7 +2,12 @@ import { CalendarGrid } from "./CalendarGrid";
 import { CalendarList } from "./CalendarList";
 import { CalendarDay } from "./CalendarDay";
 import { EventList } from "./EventList";
-import { findFirstDay, formatDate, formatDateToDT } from "../utils/date";
+import {
+  findFirstDay,
+  formatDate,
+  formatDateToDT,
+  months,
+} from "../utils/date";
 import { listViewEvents } from "../utils/events";
 import { View } from "../types/event";
 import { useCalendar } from "../hooks/useCalendar";
@@ -85,21 +90,6 @@ export const Calendar = () => {
     dateInAdd,
   } = useCalendar(mockedEvents);
 
-  const months: { [key: number]: string } = {
-    1: "leden",
-    2: "únor",
-    3: "březen",
-    4: "duben",
-    5: "květen",
-    6: "červen",
-    7: "červenec",
-    8: "srpen",
-    9: "září",
-    10: "říjen",
-    11: "listopad",
-    12: "prosinec",
-  };
-
   const [selectedEvent, setSelectedEvent] = useState<EventType | null>(null);
 
   const eventsByDate: Record<string, typeof event> = {};
@@ -121,7 +111,7 @@ export const Calendar = () => {
       }
     } else if (type == "next") {
       month++;
-      if (month == 12) {
+      if (month == 13) {
         month = 1;
         year++;
       }
@@ -208,47 +198,76 @@ export const Calendar = () => {
 
     nextMonthDay++;
   }
-  console.log(eventList);
+
+  const days = [
+    "Pondělí",
+    "Úterý",
+    "Středa",
+    "Čtvrtek",
+    "Pátek",
+    "Sobota",
+    "Neděle",
+  ];
+
   return (
     <>
-      <div className="wrapper d-flex flex-row">
+      <div className="wrapper">
+        <div className="calendar-header-wrapper">
+          <CalendarHeader
+            month={month}
+            year={year}
+            months={months}
+            inputRef={inputRef}
+            hideInput={hideInput}
+            showInputDate={showInputDate}
+            handlePrevClick={handlePrevClick}
+            handleNextClick={handleNextClick}
+            handleTodayClick={handleTodayClick}
+            AddEventCurrentDay={addEventCurrentDay}
+            setView={setView}
+          />
+        </div>
         <div className="calendar-column">
           <div className="calendar-wrapper">
-            <CalendarHeader
-              month={month}
-              year={year}
-              months={months}
-              inputRef={inputRef}
-              hideInput={hideInput}
-              showInputDate={showInputDate}
-              handlePrevClick={handlePrevClick}
-              handleNextClick={handleNextClick}
-              handleTodayClick={handleTodayClick}
-              AddEventCurrentDay={addEventCurrentDay}
-              setView={setView}
-            />
+            {view !== View.list ? (
+              <div className="weekDaysContainer">
+                {" "}
+                <div className="weekDaysWrapper">
+                  {days.map((day, index) => (
+                    <div key={index} className="weekDays">
+                      {day}
+                    </div>
+                  ))}
+                </div>
+                <div className="weekDaysWrapperSpan"></div>
+              </div>
+            ) : undefined}
 
-            <div className="calendar-body">
-              {view === View.list ? (
-                <CalendarList
-                  events={listViewEvents(event, month)}
-                  onSelectEvent={setSelectedEvent}
-                />
-              ) : (
-                <CalendarGrid arr={arr} />
-              )}
+            <div className="calendar-body-left">
+              <div className="">
+                {view === View.list ? (
+                  <CalendarList
+                    events={listViewEvents(event, month)}
+                    onSelectEvent={setSelectedEvent}
+                  />
+                ) : (
+                  <CalendarGrid arr={arr} />
+                )}
+              </div>
+            </div>
+            <div className="calendar-body-right">
+              <EventList
+                onSelectEvent={setSelectedEvent}
+                events={eventList.length > 0 ? eventList : []}
+                eventDate={actualDate(months)}
+                nextDay={nextDay}
+                prevDay={prevDay}
+                addEventCurrentDay={addEventCurrentDay}
+                deleteEvent={handleChange}
+              />
             </div>
           </div>
         </div>
-
-        <EventList
-          onSelectEvent={setSelectedEvent}
-          events={eventList.length > 0 ? eventList : []}
-          eventDate={actualDate(months)}
-          nextDay={nextDay}
-          prevDay={prevDay}
-          addEventCurrentDay={addEventCurrentDay}
-        />
       </div>
 
       {selectedEvent && (

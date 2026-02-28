@@ -19,15 +19,54 @@ body {
 }
 
 .wrapper {
-  width: 1450px;
-
-  padding: 50px;
+  margin: 15px;
+  border-radius: 20px;
+  width: 75vw;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
   height: 100%;
+  justify-content: center;
+  background-color: #ffffff;
 }
 
 .calendar-wrapper {
   padding: 15px;
   background-color: #ffffff;
+  display: grid;
+  grid-template-columns: 75% 25%;
+  grid-template-rows: 2;
+}
+
+.weekDaysContainer {
+  border-bottom: 1px solid black;
+  margin-bottom: 20px;
+}
+
+.weekDaysWrapperSpan {
+  background: rgb(205, 30, 30);
+  width: 100%;
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.weekDaysWrapper {
+  border-bottom: 2px black;
+  display: grid;
+
+  grid-template-columns: repeat(7, 1fr);
+  grid-row: 1;
+  background-color: rgb(255, 255, 255);
+}
+
+.calendar-body-left {
+  grid-column: 1;
+  grid-row: 2;
+  width: 100%;
+}
+.calendar-body-right {
+  grid-column: 2;
+  grid-row: 2;
 }
 
 #calendar {
@@ -43,6 +82,12 @@ body {
 }
 
 /* Calendar Header Grid */
+
+.calendar-header-wrapper {
+  width: 100%;
+  height: 10vh;
+  background-color: rgb(255, 255, 255);
+}
 
 .calendar-header {
   display: grid;
@@ -80,7 +125,7 @@ body {
 .arrow-prev,
 .today-btn,
 .view-btn {
-  background-color: #d3cfcf;
+  background-color: transparent;
   color: rgb(44, 43, 43);
   padding: 8px 12px;
   font-size: 16px;
@@ -91,8 +136,8 @@ body {
   align-items: center;
   justify-content: center;
   height: 40px;
-  min-width: 50px;
-  border: 3px solid black;
+  min-width: 60px;
+  border: 1px solid black;
   font-weight: bolder;
 }
 
@@ -200,13 +245,13 @@ body {
 }
 
 .calendarDay {
-  background-color: #d0d0da;
-  width: 130px;
-  height: 130px;
-  overflow-y: auto;
-  border-radius: 20px;
+  background-color: #ededf1;
+  width: 135px;
+  height: 135px;
+  overflow-y: hidden;
+  border: 0.5px solid rgb(193, 186, 186);
 
-  border: 1px solid black;
+  /* border-radius: 20px;  */
 }
 
 .day-num {
@@ -240,12 +285,9 @@ body {
 .calendarDaysLayout {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-  margin: 10px 5px;
-  width: 60%;
 }
 #calendar-list {
-  width: 60%;
+  width: 100%;
 }
 
 .to-circle {
@@ -258,14 +300,14 @@ body {
 
 /* Wrapper pro denní seznam událostí */
 .day-event-list-wrapper {
-  width: 350px;
+  width: 100%;
   height: 100%;
-  min-height: 60vh;
+  min-height: 70vh;
   max-height: 80vh;
-  margin-top: 30px;
-  margin-left: 30px;
+
+  margin-left: 10px;
   border: 1px solid #ccc;
-  border-radius: 12px;
+  /* border-radius: 12px; */
   padding: 15px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
@@ -290,8 +332,68 @@ body {
   color: #555;
 }
 
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn.delete {
+  color: red;
+}
+
+.icon-btn svg {
+  font-size: 22px;
+}
+
+.icon-btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.icon-btn:hover svg {
+  transform: scale(1.1);
+  transition: 0.2s ease;
+}
+
+.event-title-event-list {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.event-note,
+.event-location {
+  display: grid;
+  grid-template-columns: 15% 90%;
+  align-items: center;
+}
+
+.event-note p,
+.event-location p {
+  width: 80%;
+  white-space: normal;
+  word-wrap: break-word;
+}
+
+.note-icon,
+.location-icon {
+  font-size: 22px;
+}
+
+.event-location p {
+  font-weight: 500;
+}
+
+.location-icon {
+  color: red;
+}
+
 /* Navigační tlačítka nahoře */
-.day-event-list-wrapper button {
+.day-event-nav button {
   padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid #bbb;
@@ -314,25 +416,34 @@ body {
   margin-top: 8px;
 }
 
-/* Styl pro jednotlivý event (DayEvent) */
-.day-event-list .day-event-single {
-  display: flex;
+.event-list-view {
+  padding: 10px;
+  background-color: rgb(248, 248, 248);
+
+  box-shadow: 0 5px 15px 8px rgb(181, 179, 179);
+  overflow-y: auto;
+}
+
+/* styling grid event */
+
+.month-grid-event {
+  color: white;
+  border-radius: 6px;
+  padding: 1px 6px;
+  margin: 2px 3px;
+  font-size: 14px;
+  overflow: hidden;
+  height: 25px;
+  white-space: nowrap;
+  width: 100%;
   align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background-color: #fff;
-  border-left: 4px solid transparent;
-  cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.day-event-list .day-event-single:hover {
-  background-color: #f0f0f0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.day-event-list .color-dot {
+.month-grid-event-dotted {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin: 2px;
   flex-shrink: 0;
 }
 
@@ -413,7 +524,6 @@ body {
 }
 
 .day-event-text:hover {
-  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -499,8 +609,80 @@ body {
   background: #e2e2e2;
 }
 
-.color-pick:active {
-  border: 5px solid rgb(0, 0, 0);
+.color-pick {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  width: 28px;
+  cursor: pointer;
+  margin: 8px;
+  border-radius: 50%;
+}
+
+.color-pick:hover {
+  transform: scale(1.1);
+}
+
+.color-pick.choosen {
+  transform: scale(1.1);
+  box-shadow:
+    0 0 0 2px white,
+    0 0 0 4px currentColor;
+}
+
+.color-pick.choosen:after {
+  position: absolute;
+  content: "✓";
+  color: white;
+  background-color: transparent;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.alert-wrapper {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  backdrop-filter: blur(3px);
+  z-index: 999;
+}
+
+.alert-window {
+  width: 500px;
+  height: 220px;
+  background-color: rgb(251, 248, 248);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+button:hover {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.alert-window button {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.warning-alert {
+  color: rgb(255, 0, 0);
+}
+.confirm-alert {
+  background-color: #ff0019 !important;
+  color: white;
 }
 
 @media (max-width: 800px) {

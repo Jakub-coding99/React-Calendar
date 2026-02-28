@@ -45,6 +45,7 @@ export const CalendarDay = ({
                 events={ev}
                 totalEvents={totalEvents}
                 onSelect={() => onDay?.(date, events)}
+                className="month-grid-event"
               />
             ))
           : null}

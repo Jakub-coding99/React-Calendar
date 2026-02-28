@@ -17,7 +17,7 @@ export const CalendarList = ({ events, onSelectEvent }: Props) => {
               key={ev.id}
               events={ev}
               onSelect={() => onSelectEvent(ev)}
-              viewForCalendarList={true}
+              className="calendar-list-view"
             />
           ))}
         </div>

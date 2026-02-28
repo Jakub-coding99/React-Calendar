@@ -37,6 +37,7 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     date: { day: number; month: number; year: number },
     data?: EventType[],
   ) => {
+    console.log(date);
     setDay(date.day);
     setMonth(date.month);
     setYear(date.year);
@@ -115,7 +116,6 @@ export const useCalendar = (initialsEvents: EventType[]) => {
         ev.id === id ? (ev = data.data) : ev,
       );
       setEvent(updatedEvents);
-      console.log(updatedEvents);
 
       setEventList(filterEV(year, month, day, updatedEvents));
     }

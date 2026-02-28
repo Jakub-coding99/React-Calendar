@@ -5,25 +5,8 @@ interface Props {
 }
 
 export const CalendarGrid = ({ arr }: Props) => {
-  const days = [
-    "Pondělí",
-    "Úterý",
-    "Středa",
-    "Čtvrtek",
-    "Pátek",
-    "Sobota",
-    "Neděle",
-  ];
-
   return (
     <>
-      <div className="weekDaysWrapper">
-        {days.map((day, index) => (
-          <div key={index} className="weekDays">
-            {day}
-          </div>
-        ))}
-      </div>
       <div className="calendarDaysLayout">
         {arr?.map((dayItem, index) => (
           <div key={index} className="calendarDays">

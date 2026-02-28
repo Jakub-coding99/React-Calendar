@@ -7,6 +7,7 @@ import {
 import { Button } from "./Button";
 import { View } from "../types/event";
 import { useEffect, useState, useRef } from "react";
+import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 
 interface CalendarHeaderProps {
   month: number;
@@ -95,11 +96,13 @@ export const CalendarHeader = ({
       </div>
 
       <div className="view-btn-wrapper">
-        <Button
-          className="view-btn"
-          children="Zobrazení"
-          onClick={handleDropdown}
-        />
+        <Button className="view-btn" onClick={handleDropdown}>
+          Zobrazení{" "}
+          <span>
+            <MdOutlineKeyboardArrowDown size={20} />
+          </span>
+        </Button>
+
         {openDropdown && (
           <div ref={dropdownRef} className="dropdown-calendar-header">
             <Button
