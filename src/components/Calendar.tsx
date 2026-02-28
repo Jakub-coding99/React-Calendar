@@ -1,19 +1,19 @@
-import { CalendarGrid } from "./CalendarGrid";
-import { CalendarList } from "./CalendarList";
-import { CalendarDay } from "./CalendarDay";
-import { EventList } from "./EventList";
+import { useCalendar } from "../hooks/useCalendar";
+import type { EventType } from "../types/event";
+import { View } from "../types/event";
 import {
-  findFirstDay,
-  formatDate,
-  formatDateToDT,
-  months,
+    findFirstDay,
+    formatDate,
+    formatDateToDT,
+    months,
 } from "../utils/date";
 import { listViewEvents } from "../utils/events";
-import { View } from "../types/event";
-import { useCalendar } from "../hooks/useCalendar";
-import { Modal } from "./Modal";
-import type { EventType } from "../types/event";
+import { CalendarDay } from "./CalendarDay";
+import { CalendarGrid } from "./CalendarGrid";
 import { CalendarHeader } from "./CalendarHeader";
+import { CalendarList } from "./CalendarList";
+import { EventList } from "./EventList";
+import { Modal } from "./Modal";
 
 export const Calendar = () => {
   const mockedEvents = [
@@ -28,7 +28,6 @@ export const Calendar = () => {
       "modalStatem"
       "modalStatemjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj`,
     },
-    ,
     {
       event: "Melír",
       start: "2026-02-03T10:00",

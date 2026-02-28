@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "./Button";
-import type { EventType } from "../types/event";
-import { Alert } from "./Alert";
-import { useDeleteEvent } from "../utils/eventActions";
 import { FaEdit } from "react-icons/fa";
-import { RiDeleteBin6Line } from "react-icons/ri";
-import { IoMdClose } from "react-icons/io";
 import { HiOutlineCalendarDateRange } from "react-icons/hi2";
-import { formatToPrettyDate } from "../utils/date";
-import { TbClockHour4 } from "react-icons/tb";
+import { IoMdClose } from "react-icons/io";
 import { MdNotes } from "react-icons/md";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { TbClockHour4 } from "react-icons/tb";
+import type { EventType } from "../types/event";
+import { formatToPrettyDate } from "../utils/date";
+import { useDeleteEvent } from "../utils/eventActions";
+import { Alert } from "./Alert";
+import { Button } from "./Button";
 
 interface Props {
-  e: EventType;
+  e?: EventType;
   onChange: (d: any) => void;
   onClose: () => void;
   type?: "edit" | "add" | "show";
   fillDate?: string;
 }
+
+const MAX_EVENT_TITLE_LENGTH = 120;
 
 export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   const [date, setDate] = useState(e?.start.slice(0, 10) ?? fillDate ?? "");
@@ -51,12 +53,32 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
 
   const submitEvent = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
+
+    const safeTitle = title?.trim() ?? "";
+
+    // FIXME(security): Klientská validace sama o sobě nestačí, stejné kontroly musí být i na API/serveru.
+    if (!safeTitle || safeTitle.length > MAX_EVENT_TITLE_LENGTH) {
+      return;
+    }
+
+    const startTimestamp = Date.parse(`${date}T${from}`);
+    const endTimestamp = Date.parse(`${endDate}T${to}`);
+
+    // FIXME(security): Zamezí vytvoření nevalidních intervalů, které by šly zneužít k rozbití datové konzistence.
+    if (
+      !Number.isFinite(startTimestamp) ||
+      !Number.isFinite(endTimestamp) ||
+      startTimestamp > endTimestamp
+    ) {
+      return;
+    }
+
     if (type == "edit") {
       onChange({
         type: "edit",
         data: {
           id: e?.id,
-          event: title,
+          event: safeTitle,
           start: `${date}T${from}:00`,
           end: `${endDate}T${to}:00`,
           color: e?.color,
@@ -66,13 +88,19 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
       onClose();
     }
     if (type == "add") {
+      const generatedId =
+        globalThis.crypto?.randomUUID?.() ??
+        `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
       onChange({
         type: "add",
         data: {
-          id: "10",
-          event: title,
+          // FIXME(security): Nepoužívej statické/předvídatelné ID, jinak hrozí kolize a nechtěné přepsání/smazání.
+          id: generatedId,
+          event: safeTitle,
           start: `${date}T${from}:00`,
           end: `${endDate}T${to}:00`,
+          // TODO(security): Whitelist barev musí být validovaný i na backendu, ne jen v UI.
           color: colors.includes(eventColor) ? eventColor : "#6594B1",
         },
       });
@@ -146,7 +174,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
               </button>
             </form>
           )}
-          {isShow && (
+          {isShow && e && (
             <div className="d-flex flex-column gap-4">
               <div className="modal-header-show d-flex flex-row d-flex justify-content-between align-items-center  w-100">
                 <div
@@ -219,6 +247,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                           padding: "8px",
                         }}
                       >
+                        {/* TODO(security): Pokud by se někdy renderoval HTML obsah, musí jít přes sanitizer (např. DOMPurify). */}
                         {e.note}
                       </p>
                     </div>
