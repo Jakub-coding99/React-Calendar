@@ -152,16 +152,9 @@ export const DayEvent = ({
       ) : undefined}
 
       {className == "calendar-list-view" ? (
-        <div
-          className="event-list-view"
-          style={{
-            backgroundColor: "beige",
-            color: "blue",
-          }}
-        >
-          {" "}
+        <div onClick={openModal} className="month-list-view" style={{}}>
           {events.event}
-          <button onClick={openModal}>edit</button>
+          {events.start.split("T")[1]}
         </div>
       ) : undefined}
     </>

@@ -1,26 +1,61 @@
 import { DayEvent } from "./DayEvent";
-import type { EventType } from "../types/event";
+import type { EventType, listEventsType } from "../types/event";
+import { months } from "../utils/date";
 
 interface Props {
-  events?: EventType[];
+  events?: listEventsType[];
 
   onSelectEvent: (event: EventType) => void;
 }
 
 export const CalendarList = ({ events, onSelectEvent }: Props) => {
+  console.log(events);
   return (
     <>
+      <div>
+        {events?.map((day) => (
+          <div className="new-event-list-day">
+            <div className="d-flex flex-row">
+              <div
+                style={{
+                  width: "60px",
+                  background: "grey",
+                  height: "60px",
+                  borderRadius: "10px",
+                }}
+                className="d-flex flex-column m-0  g-0 justify-content-center align-items-center"
+              >
+                <span className="fw-bold" style={{ fontSize: 20 }}>
+                  {Number(day.date.split("-")[2])}{" "}
+                </span>
+                <span style={{ textTransform: "uppercase" }}>
+                  {months[Number(day.date.split("-")[1])].slice(0, 3)}
+                </span>
+              </div>
+              <div className="d-flex align-items-center mx-2">
+                <span>
+                  {day.events.length}{" "}
+                  {day.events.length == 1 ? "událost" : "události"}{" "}
+                </span>
+              </div>
+            </div>
+
+            {day.events.map((ev, index) => (
+              <DayEvent
+                key={index}
+                events={ev}
+                onSelect={() => onSelectEvent(ev)}
+                className="calendar-list-view"
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {events?.length == 0 ? "neni udalost" : undefined}
+
       <div id="calendar-list">
-        <div className="calendar-list-wrapper">
-          {events?.map((ev) => (
-            <DayEvent
-              key={ev.id}
-              events={ev}
-              onSelect={() => onSelectEvent(ev)}
-              className="calendar-list-view"
-            />
-          ))}
-        </div>
+        <div className="calendar-list-wrapper"></div>
       </div>
     </>
   );

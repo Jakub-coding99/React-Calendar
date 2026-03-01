@@ -28,17 +28,17 @@ export const Calendar = () => {
       "modalStatem"
       "modalStatemjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj`,
     },
-    ,
+
     {
       event: "Melír",
-      start: "2026-02-03T10:00",
+      start: "2026-03-03T10:00",
       end: "2026-02-03T11:00",
       id: "2",
       color: "blue",
     },
     {
       event: "Střih",
-      start: "2026-02-04T10:00",
+      start: "2026-03-03T10:00",
       end: "2026-02-04T11:00",
       id: "3",
       color: "blue",
@@ -105,7 +105,7 @@ export const Calendar = () => {
     setModalState({ action: "show", event });
   };
 
-  const eventsByDate: Record<string, typeof event> = {};
+  const eventsByDate: Record<string, EventType[]> = {};
 
   event.forEach((ev) => {
     const date = ev.start.split("T")[0];
@@ -113,6 +113,9 @@ export const Calendar = () => {
       eventsByDate[date] = [];
     }
     eventsByDate[date].push(ev);
+    eventsByDate[date].sort(
+      (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+    );
   });
 
   const findDaysBeforeMonth = (year: number, month: number, type: string) => {
@@ -256,7 +259,7 @@ export const Calendar = () => {
                 {view === View.list ? (
                   <CalendarList
                     events={listViewEvents(event, month)}
-                    onSelectEvent={openEditModal}
+                    onSelectEvent={openShowModal}
                   />
                 ) : (
                   <CalendarGrid arr={arr} />

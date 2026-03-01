@@ -489,10 +489,23 @@ body {
 
 .event-list-view {
   padding: 10px;
-  background-color: rgb(248, 248, 248);
+  background-color: rgb(193, 185, 185);
 
   box-shadow: 0 5px 15px 8px rgb(181, 179, 179);
   overflow-y: auto;
+}
+
+.event-list-view:hover {
+  background-color: #e2dfdf;
+}
+
+.month-list-view {
+  background-color: whitesmoke;
+}
+
+.month-list-view:hover {
+  cursor: pointer;
+  background-color: grey;
 }
 
 /* styling grid event */

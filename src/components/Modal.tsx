@@ -34,7 +34,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
 
   const { showAlert, handleDelete, triggerDelete, setShowAlert } =
     useDeleteEvent({
-      e: e!,
+      e: e,
       onChange,
       onClose,
     });

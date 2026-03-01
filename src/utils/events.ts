@@ -1,11 +1,31 @@
-import type { EventType } from "../types/event";
+import type { EventType, listEventsType } from "../types/event";
 import { formatDate, formatDateToDT } from "./date";
 
-export const listViewEvents = (event: EventType[], month: number) => {
-  const filteredMonth = event.filter(
-    (ev) => Number(ev.start.split("T")[0].split("-")[1]) == month,
-  );
-  return filteredMonth;
+export const listViewEvents = (
+  events: EventType[],
+  month: number,
+): listEventsType[] => {
+  const filteredEvents: Record<string, EventType[]> = {};
+  events
+    .filter((ev) => Number(ev.start.split("T")[0].split("-")[1]) == month)
+    .forEach((ev) => {
+      const date = ev.start.split("T")[0];
+      if (!filteredEvents[date]) {
+        filteredEvents[date] = [];
+      }
+
+      filteredEvents[date].push(ev);
+      filteredEvents[date].sort(
+        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+      );
+    });
+
+  const eventsArray = Object.entries(filteredEvents).map(([date, events]) => ({
+    date,
+    events,
+  }));
+
+  return eventsArray;
 };
 
 export const updateClickedDay = (event: EventType[], month: number) => {

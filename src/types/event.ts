@@ -17,3 +17,8 @@ export interface ModalState {
   action: "add" | "edit" | "show";
   fillData?: string;
 }
+
+export interface listEventsType {
+  date: string;
+  events: EventType[];
+}
