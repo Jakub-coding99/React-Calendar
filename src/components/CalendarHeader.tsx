@@ -121,6 +121,15 @@ export const CalendarHeader = ({
                 setOpenDropdown(false);
               }}
             />
+
+            <Button
+              onClick={() => {
+                setView(View.day);
+                setOpenDropdown(false);
+              }}
+              className="day-view-btn"
+              children="Denní"
+            />
           </div>
         )}
       </div>

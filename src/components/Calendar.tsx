@@ -14,6 +14,7 @@ import { useCalendar } from "../hooks/useCalendar";
 import { Modal } from "./Modal";
 import type { EventType } from "../types/event";
 import { CalendarHeader } from "./CalendarHeader";
+import type React from "react";
 
 export const Calendar = () => {
   const mockedEvents = [
@@ -23,10 +24,8 @@ export const Calendar = () => {
       end: "2026-02-02T11:00",
       id: "1",
       color: "red",
-      note: `jojojojjjjjjjjjjjjjjjjjjjmm mmm
-      "mmmmmm
-      "modalStatem"
-      "modalStatemjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj`,
+      note: `jojojojjjjjjjjjjjjjjjjjjjmm mmmmmmmmm modalStatem modalStatemjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj`,
+      location: "Ostrava",
     },
 
     {
@@ -220,6 +219,38 @@ export const Calendar = () => {
 
   const days = ["PO", "ÚT", "ST", "ČT", "PÁ", "SO", "NE"];
 
+  const renderView = () => {
+    switch (view) {
+      case View.list:
+        return (
+          <CalendarList
+            events={listViewEvents(event, month)}
+            onSelectEvent={openShowModal}
+          />
+        );
+
+      case View.month:
+        return <CalendarGrid arr={arr} />;
+
+      case View.day:
+        return (
+          <EventList
+            onSelectEvent={openEditModal}
+            events={eventList.length > 0 ? eventList : []}
+            eventDate={actualDate(months)}
+            nextDay={nextDay}
+            prevDay={prevDay}
+            addEventCurrentDay={() =>
+              openAddModal(formatDateToDT(year, month, day))
+            }
+            deleteEvent={handleChange}
+          />
+        );
+    }
+  };
+
+  const renderedView = renderView();
+
   return (
     <>
       <div className="wrapper">
@@ -240,7 +271,7 @@ export const Calendar = () => {
         </div>
         <div className="calendar-column">
           <div className="calendar-wrapper">
-            {view !== View.list ? (
+            {view == View.month ? (
               <div className="weekDaysContainer">
                 {" "}
                 <div className="weekDaysWrapper">
@@ -255,17 +286,9 @@ export const Calendar = () => {
             ) : undefined}
 
             <div className={`calendar-body-left ${animate}`}>
-              <div className="">
-                {view === View.list ? (
-                  <CalendarList
-                    events={listViewEvents(event, month)}
-                    onSelectEvent={openShowModal}
-                  />
-                ) : (
-                  <CalendarGrid arr={arr} />
-                )}
-              </div>
+              {renderedView}
             </div>
+
             <div className="calendar-body-right">
               <EventList
                 onSelectEvent={openEditModal}

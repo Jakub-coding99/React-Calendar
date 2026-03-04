@@ -6,6 +6,7 @@ import { Alert } from "../components/Alert";
 import { useDeleteEvent } from "../utils/eventActions";
 import { MdNotes } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
+import { TbClockHour4 } from "react-icons/tb";
 
 interface Props {
   events: EventType;
@@ -101,23 +102,27 @@ export const DayEvent = ({
               <p>{`${formatToPrettyDate(startDate)} ${startTime} - ${formatToPrettyDate(endDate)} ${endTime}`}</p>
             </div>
           )}
+          {events.note ? (
+            <div className="event-note">
+              <div className="note-icon">
+                <MdNotes />
+              </div>
 
-          <div className="event-note">
-            <div className="note-icon">
-              <MdNotes />
+              <p>
+                jhlk jlkjlkkkk llkklklk
+                kkljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
+              </p>
             </div>
+          ) : undefined}
 
-            <p>
-              jhlk jlkjlkkkk llkklklk
-              kkljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-            </p>
-          </div>
-          <div className="event-location">
-            <div className="location-icon">
-              <FaLocationDot />
+          {events.location ? (
+            <div className="event-location">
+              <div className="location-icon">
+                <FaLocationDot />
+              </div>
+              <p>Ostrava</p>
             </div>
-            <p>Ostrava</p>
-          </div>
+          ) : undefined}
         </div>
       ) : undefined}
 
@@ -152,9 +157,48 @@ export const DayEvent = ({
       ) : undefined}
 
       {className == "calendar-list-view" ? (
-        <div onClick={openModal} className="month-list-view" style={{}}>
-          {events.event}
-          {events.start.split("T")[1]}
+        <div
+          style={{ borderLeft: `${events.color} 5px solid` }}
+          onClick={openModal}
+          className="month-list-view"
+        >
+          <div className="month-list-left d-flex  align-items-center justify-content-between gap-2">
+            <span className="bigger-span">{events.start.split("T")[1]}</span>
+            <span className="smaller-span">1h</span>
+          </div>
+          <div className="month-list-right d-flex flex-column justify-content-between gap-2">
+            <div className="d-flex flex-row justify-content-between">
+              <span className="bigger-span">{events.event}</span>
+              <span
+                style={{
+                  background: events.color,
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
+                }}
+              ></span>
+            </div>
+            <span
+              style={{
+                overflowY: "auto",
+                width: "100%",
+                whiteSpace: "pre-line",
+                maxHeight: "50%",
+              }}
+            >
+              {events.note}
+            </span>
+            <span>
+              <span>
+                {" "}
+                <TbClockHour4 size={15} />
+              </span>
+              <span className="smaller-span">
+                {" "}
+                {events.start.split("T")[1]} - {events.end.split("T")[1]}
+              </span>
+            </span>
+          </div>
         </div>
       ) : undefined}
     </>

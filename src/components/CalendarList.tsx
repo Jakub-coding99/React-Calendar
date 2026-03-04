@@ -12,19 +12,11 @@ export const CalendarList = ({ events, onSelectEvent }: Props) => {
   console.log(events);
   return (
     <>
-      <div>
-        {events?.map((day) => (
-          <div className="new-event-list-day">
-            <div className="d-flex flex-row">
-              <div
-                style={{
-                  width: "60px",
-                  background: "grey",
-                  height: "60px",
-                  borderRadius: "10px",
-                }}
-                className="d-flex flex-column m-0  g-0 justify-content-center align-items-center"
-              >
+      <div className="list-content">
+        {events?.map((day, index) => (
+          <div key={index} className="new-event-list-day">
+            <div className="d-flex flex-row marker-list-border ">
+              <div className="d-flex flex-column m-0  g-0 justify-content-center align-items-center day-marker-list">
                 <span className="fw-bold" style={{ fontSize: 20 }}>
                   {Number(day.date.split("-")[2])}{" "}
                 </span>
@@ -39,24 +31,21 @@ export const CalendarList = ({ events, onSelectEvent }: Props) => {
                 </span>
               </div>
             </div>
-
-            {day.events.map((ev, index) => (
-              <DayEvent
-                key={index}
-                events={ev}
-                onSelect={() => onSelectEvent(ev)}
-                className="calendar-list-view"
-              />
-            ))}
+            <div>
+              {day.events.map((ev, index) => (
+                <DayEvent
+                  key={index}
+                  events={ev}
+                  onSelect={() => onSelectEvent(ev)}
+                  className="calendar-list-view"
+                />
+              ))}
+            </div>
           </div>
         ))}
       </div>
 
       {events?.length == 0 ? "neni udalost" : undefined}
-
-      <div id="calendar-list">
-        <div className="calendar-list-wrapper"></div>
-      </div>
     </>
   );
 };

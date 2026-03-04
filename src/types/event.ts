@@ -5,11 +5,13 @@ export interface EventType {
   id: string;
   color: string;
   note?: string;
+  location?: string;
 }
 
 export enum View {
   month = "month",
   list = "list",
+  day = "day",
 }
 
 export interface ModalState {

@@ -50,13 +50,6 @@ body {
   margin-bottom: 5px;
 }
 
-/* .weekDaysWrapperSpan {
-  background: rgb(205, 30, 30);
-  width: 100%;
-  grid-row: 1;
-  grid-column: 2;
-} */
-
 .weekDaysWrapper {
   display: grid;
 
@@ -72,8 +65,8 @@ body {
   grid-column: 1;
   grid-row: 2;
   width: 100%;
-  border-left: 0.5px solid rgb(224, 224, 224);
-  border-right: 0.5px solid rgb(224, 224, 224);
+  /* border-left: 0.5px solid rgb(224, 224, 224);
+  border-right: 0.5px solid rgb(224, 224, 224); */
   padding-top: 30px;
 }
 .calendar-body-right {
@@ -305,7 +298,7 @@ body {
 
 .calendarDaysLayout {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
 .calendar-body-left {
@@ -489,23 +482,87 @@ body {
 
 .event-list-view {
   padding: 10px;
-  background-color: rgb(193, 185, 185);
+  background-color: rgb(255, 255, 255);
 
-  box-shadow: 0 5px 15px 8px rgb(181, 179, 179);
+  box-shadow: 0 5px 25px 8px rgb(238, 238, 238);
   overflow-y: auto;
 }
 
 .event-list-view:hover {
-  background-color: #e2dfdf;
+  cursor: pointer;
+  transform: translateY(-5px);
+  transition: transform 0.8s ease;
 }
 
 .month-list-view {
-  background-color: whitesmoke;
+  background-color: #ffffff;
+  height: 16vh;
+  width: 95%;
+  padding: 10px;
+  margin: 15px auto;
+  border: 0.5px solid rgb(234, 233, 233);
+  display: grid;
+  grid-template-columns: 10% 90%;
+  min-width: 0;
+  min-height: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.list-content {
+  margin: 0 30px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 70vh;
+}
+
+.month-list-left {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.smaller-span {
+  font-size: 14px;
+  color: rgb(89, 89, 89);
+}
+.bigger-span {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.month-list-right {
+  grid-column: 2;
+}
+
+.day-marker-list {
+  font-size: 19px;
+  width: 70px;
+  background-color: #f8f7f7;
+  height: 70px;
+  border-radius: 10px;
+  margin: 20px 0;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.marker-list-border {
+  position: relative;
+}
+
+.marker-list-border::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 0.5px;
+  background-color: rgb(223, 223, 223);
+  bottom: -5px;
 }
 
 .month-list-view:hover {
   cursor: pointer;
-  background-color: grey;
+  border: 1px solid rgb(155, 155, 212);
+  transform: scale(1.03);
+  transition: transform 0.8s ease;
 }
 
 /* styling grid event */
@@ -782,12 +839,91 @@ button:hover {
   color: white;
 }
 
+.day-view-btn {
+  display: none;
+}
 @media (max-width: 800px) {
-  .calendarWrapper {
-    overflow-x: auto;
+  html,
+  body {
+    overflow-x: hidden;
   }
 
-  .calendarDay {
-    overflow-y: auto;
+  .calendar-page {
+    width: 100%;
+    height: auto;
+    justify-content: flex-start;
+  }
+
+  .wrapper {
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    border-radius: 0;
+  }
+
+  .calendar-wrapper {
+    display: block;
+    padding: 0;
+  }
+
+  .calendar-body {
+    width: 100%;
+    padding: 10px;
+  }
+
+  #calendar {
+    width: 100%;
+    height: auto;
+    padding: 0;
+    margin: 0;
+  }
+
+  /* HEADER */
+  .calendar-header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .header-date-wrapper,
+  .direction-btns,
+  .view-btn-wrapper,
+  .add-btn {
+    width: 100%;
+  }
+
+  .day-view-btn {
+    display: block;
+  }
+
+  .direction-btns {
+    justify-content: space-between;
+  }
+
+  /* skryj pravý panel */
+  .calendar-body-right {
+    display: none;
+  }
+
+  .calendarDaysLayout {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  /* dny */
+
+  .calendarDays {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* pokud chceš čtverce */
+  }
+
+  /* týdny */
+  .weekDaysContainer {
+    width: 100%;
+  }
+
+  .weekDaysWrapper {
+    width: 100%;
   }
 }
