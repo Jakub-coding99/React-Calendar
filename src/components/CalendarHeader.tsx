@@ -56,94 +56,106 @@ export const CalendarHeader = ({
   });
 
   return (
-    <div className="calendar-header">
-      <div className="header-date-wrapper">
-        <h1 id="calendar-date">{`${months[month]} ${year}`}</h1>
+    <>
+      <div className="calendar-header">
+        <div className="header-date-wrapper">
+          <h1 id="calendar-date">{`${months[month]} ${year}`}</h1>
 
-        <div className="date-select">
-          <div className="date-wrapper">
-            <button className="calendar-btn" onClick={hideInput}>
-              <FaCalendarAlt size={18} />
-            </button>
-            <input
-              ref={inputRef}
-              type="month"
-              onChange={showInputDate}
-              className="datePicker"
-            />
+          <div className="date-select">
+            <div className="date-wrapper">
+              <button className="calendar-btn" onClick={hideInput}>
+                <FaCalendarAlt size={18} />
+              </button>
+              <input
+                ref={inputRef}
+                type="month"
+                onChange={showInputDate}
+                className="datePicker"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="direction-btns d-flex flex-row justify-content-center">
+        <div className="direction-btns d-flex flex-row justify-content-center">
+          <Button
+            children={<FaAngleDoubleLeft />}
+            className="arrow-prev"
+            onClick={handlePrevClick}
+          />
+
+          <Button
+            className="today-btn"
+            children="Dnes"
+            onClick={handleTodayClick}
+          />
+
+          <Button
+            className="arrow-next"
+            onClick={handleNextClick}
+            children={<FaAngleDoubleRight />}
+          />
+        </div>
+
+        <div className="view-btn-wrapper">
+          <Button className="view-btn" onClick={handleDropdown}>
+            Zobrazení{" "}
+            <span>
+              <MdOutlineKeyboardArrowDown size={20} />
+            </span>
+          </Button>
+
+          {openDropdown && (
+            <div ref={dropdownRef} className="dropdown-calendar-header">
+              <Button
+                className="list-view-btn"
+                children="List"
+                onClick={() => {
+                  setView(View.list);
+                  setOpenDropdown(false);
+                }}
+              />
+              <Button
+                className="month-view-btn"
+                children="Měsíční"
+                onClick={() => {
+                  setView(View.month);
+                  setOpenDropdown(false);
+                }}
+              />
+
+              <Button
+                onClick={() => {
+                  setView(View.day);
+                  setOpenDropdown(false);
+                }}
+                className="day-view-btn"
+                children="Denní"
+              />
+            </div>
+          )}
+        </div>
+
         <Button
-          children={<FaAngleDoubleLeft />}
-          className="arrow-prev"
-          onClick={handlePrevClick}
+          className="add-btn"
+          onClick={AddEventCurrentDay}
+          children={
+            <div className="add-btn-content">
+              <span>Nová událost</span>
+              <FaPlus size={12} />
+            </div>
+          }
         />
-
-        <Button
-          className="today-btn"
-          children="Dnes"
-          onClick={handleTodayClick}
-        />
-
-        <Button
-          className="arrow-next"
-          onClick={handleNextClick}
-          children={<FaAngleDoubleRight />}
-        />
-      </div>
-
-      <div className="view-btn-wrapper">
-        <Button className="view-btn" onClick={handleDropdown}>
-          Zobrazení{" "}
-          <span>
-            <MdOutlineKeyboardArrowDown size={20} />
-          </span>
-        </Button>
-
-        {openDropdown && (
-          <div ref={dropdownRef} className="dropdown-calendar-header">
-            <Button
-              className="list-view-btn"
-              children="List"
-              onClick={() => {
-                setView(View.list);
-                setOpenDropdown(false);
-              }}
-            />
-            <Button
-              className="month-view-btn"
-              children="Měsíční"
-              onClick={() => {
-                setView(View.month);
-                setOpenDropdown(false);
-              }}
-            />
-
-            <Button
-              onClick={() => {
-                setView(View.day);
-                setOpenDropdown(false);
-              }}
-              className="day-view-btn"
-              children="Denní"
-            />
-          </div>
-        )}
       </div>
 
       <Button
-        className="add-btn"
+        className="mobile-add-btn"
         onClick={AddEventCurrentDay}
         children={
-          <div className="add-btn-content">
-            <span>Nová událost</span>
-            <FaPlus size={12} />
+          <div className="add-btn-content-mobile">
+            <FaPlus className="plus-icon" />
           </div>
         }
       />
-    </div>
+    </>
   );
 };

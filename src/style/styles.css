@@ -842,6 +842,11 @@ button:hover {
 .day-view-btn {
   display: none;
 }
+
+.mobile-add-btn {
+  display: none;
+}
+
 @media (max-width: 800px) {
   html,
   body {
@@ -879,29 +884,42 @@ button:hover {
   }
 
   /* HEADER */
-  .calendar-header {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  .calendar-header-wrapper {
+    height: 15vh;
   }
 
-  .header-date-wrapper,
-  .direction-btns,
-  .view-btn-wrapper,
-  .add-btn {
-    width: 100%;
+  .calendar-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    padding: 10px;
+  }
+
+  .header-date-wrapper {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .direction-btns {
+    grid-column: 1;
+    display: flex;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .view-btn-wrapper {
+    grid-column: 2;
+    display: flex;
+    justify-content: flex-end;
   }
 
   .day-view-btn {
     display: block;
   }
 
-  .direction-btns {
-    justify-content: space-between;
-  }
-
-  /* skryj pravý panel */
-  .calendar-body-right {
+  .add-btn {
     display: none;
   }
 
@@ -911,19 +929,42 @@ button:hover {
     width: 100%;
   }
 
-  /* dny */
-
   .calendarDays {
     width: 100%;
-    aspect-ratio: 1 / 1; /* pokud chceš čtverce */
+    aspect-ratio: 1 / 1;
   }
 
-  /* týdny */
   .weekDaysContainer {
     width: 100%;
   }
 
   .weekDaysWrapper {
     width: 100%;
+  }
+
+  .mobile-add-btn {
+    display: block;
+    position: fixed;
+    right: 40px;
+    bottom: 40px;
+    z-index: 20;
+    width: 60px;
+    height: 60px;
+    background-color: rgb(64, 109, 191);
+    border-radius: 50%;
+    color: white;
+    border: none;
+  }
+
+  .plus-icon {
+    size: 20px;
+  }
+
+  .add-btn {
+    display: none;
+  }
+
+  .calendar-body-right {
+    display: none;
   }
 }
