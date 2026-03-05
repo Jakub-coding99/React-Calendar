@@ -3,12 +3,13 @@ import { DayEvent } from "./DayEvent";
 
 interface Props {
   events?: EventType[];
-  nextDay?: () => void;
-  prevDay?: () => void;
+  nextDay: (type: string) => void;
+  prevDay: (type: string) => void;
   addEventCurrentDay?: (info?: string) => void;
   eventDate: string;
   onSelectEvent: (event: EventType) => void;
   deleteEvent?: () => void;
+  width: number;
 }
 
 export const EventList = ({
@@ -19,6 +20,7 @@ export const EventList = ({
   onSelectEvent,
   addEventCurrentDay,
   deleteEvent,
+  width,
 }: Props) => {
   return (
     <div className="day-event-list-wrapper">
@@ -28,8 +30,13 @@ export const EventList = ({
       </div>
 
       <div className="day-event-nav">
-        <button onClick={prevDay}>Předchozí</button>
-        <button onClick={nextDay}>Další</button>
+        {width > 1200 && (
+          <div>
+            <button onClick={() => prevDay("day-view")}>Předchozí</button>
+            <button onClick={() => nextDay("day-view")}>Další</button>
+          </div>
+        )}
+
         <button onClick={() => addEventCurrentDay?.("adding-from-event-list")}>
           Přidat
         </button>

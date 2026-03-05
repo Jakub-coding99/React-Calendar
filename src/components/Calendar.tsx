@@ -14,7 +14,6 @@ import { useCalendar } from "../hooks/useCalendar";
 import { Modal } from "./Modal";
 import type { EventType } from "../types/event";
 import { CalendarHeader } from "./CalendarHeader";
-import type React from "react";
 
 export const Calendar = () => {
   const mockedEvents = [
@@ -82,14 +81,13 @@ export const Calendar = () => {
     view,
     setView,
     eventList,
-    nextDay,
-    prevDay,
     actualDate,
     daysInMonth,
     day,
     modalState,
     setModalState,
     animate,
+    width,
   } = useCalendar(mockedEvents);
 
   const openAddModal = (fillData?: string) => {
@@ -186,6 +184,7 @@ export const Calendar = () => {
             : "today"
         }
         showSelectedEvent={openShowModal}
+        width={width}
       >
         {d}
       </CalendarDay>,
@@ -238,19 +237,20 @@ export const Calendar = () => {
             onSelectEvent={openEditModal}
             events={eventList.length > 0 ? eventList : []}
             eventDate={actualDate(months)}
-            nextDay={nextDay}
-            prevDay={prevDay}
+            nextDay={handleNextClick}
+            prevDay={handlePrevClick}
             addEventCurrentDay={() =>
               openAddModal(formatDateToDT(year, month, day))
             }
             deleteEvent={handleChange}
+            width={width}
           />
         );
     }
   };
 
   const renderedView = renderView();
-
+  console.log(width, "width");
   return (
     <>
       <div className="wrapper">
@@ -267,6 +267,7 @@ export const Calendar = () => {
             handleTodayClick={handleTodayClick}
             AddEventCurrentDay={openAddModal}
             setView={setView}
+            view={view}
           />
         </div>
         <div className="calendar-column">
@@ -294,19 +295,20 @@ export const Calendar = () => {
                 onSelectEvent={openEditModal}
                 events={eventList.length > 0 ? eventList : []}
                 eventDate={actualDate(months)}
-                nextDay={nextDay}
-                prevDay={prevDay}
+                nextDay={handleNextClick}
+                prevDay={handlePrevClick}
                 addEventCurrentDay={() =>
                   openAddModal(formatDateToDT(year, month, day))
                 }
                 deleteEvent={handleChange}
+                width={width}
               />
             </div>
           </div>
         </div>
       </div>
 
-      {modalState && (
+      {modalState && modalState.event && (
         <div id="modal-overlay" onClick={() => setModalState(null)}>
           <div onClick={(e) => e.stopPropagation()}>
             <Modal

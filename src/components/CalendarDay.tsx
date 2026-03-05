@@ -12,6 +12,7 @@ interface Props {
     date: { day: number; month: number; year: number },
     events?: EventType[],
   ) => void;
+  width?: number;
 }
 
 export const CalendarDay = ({
@@ -21,6 +22,7 @@ export const CalendarDay = ({
   onDay,
   date,
   showSelectedEvent,
+  width,
 }: Props) => {
   const totalEvents = events?.length ?? 0;
 
@@ -49,6 +51,7 @@ export const CalendarDay = ({
                 totalEvents={totalEvents}
                 className="month-grid-event"
                 showSelectedEvent={() => showSelectedEvent?.(ev)}
+                width={width}
               />
             ))
           : null}

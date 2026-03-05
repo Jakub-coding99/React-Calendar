@@ -1,7 +1,7 @@
 import {
   FaCalendarAlt,
-  FaAngleDoubleLeft,
-  FaAngleDoubleRight,
+  FaAngleLeft,
+  FaAngleRight,
   FaPlus,
 } from "react-icons/fa";
 import { Button } from "./Button";
@@ -18,9 +18,10 @@ interface CalendarHeaderProps {
   handlePrevClick: () => void;
   handleNextClick: () => void;
   handleTodayClick: () => void;
-  setView: (view: View) => void;
   AddEventCurrentDay: () => void;
   months: { [key: number]: string };
+  setView: React.Dispatch<React.SetStateAction<View>>;
+  view: string;
 }
 
 export const CalendarHeader = ({
@@ -35,8 +36,15 @@ export const CalendarHeader = ({
   AddEventCurrentDay,
   setView,
   months,
+  view,
 }: CalendarHeaderProps) => {
   const [openDropdown, setOpenDropdown] = useState(false);
+
+  const openDatePicker = (e: React.MouseEvent) => {
+    e.preventDefault();
+    inputRef.current?.showPicker?.();
+    inputRef.current?.focus();
+  };
 
   const handleDropdown = () => {
     setOpenDropdown(true);
@@ -55,30 +63,50 @@ export const CalendarHeader = ({
     }
   });
 
+  const viewInfo = () => {
+    switch (view) {
+      case (view = View.day):
+        return "Den";
+      case (view = View.month):
+        return "Měsíc";
+      case (view = View.list):
+        return "Agenda";
+    }
+  };
+
   return (
     <>
       <div className="calendar-header">
         <div className="header-date-wrapper">
-          <h1 id="calendar-date">{`${months[month]} ${year}`}</h1>
+          <h1
+            onClick={() => setView(View.month)}
+            id="calendar-date"
+          >{`${months[month]} ${year}`}</h1>
 
           <div className="date-select">
             <div className="date-wrapper">
-              <button className="calendar-btn" onClick={hideInput}>
+              <button
+                type="button"
+                className="calendar-btn"
+                onClick={openDatePicker}
+              >
                 <FaCalendarAlt size={18} />
               </button>
+
               <input
                 ref={inputRef}
                 type="month"
-                onChange={showInputDate}
                 className="datePicker"
+                onChange={showInputDate}
+                onBlur={hideInput}
               />
             </div>
           </div>
         </div>
 
-        <div className="direction-btns d-flex flex-row justify-content-center">
+        <div className="direction-btns d-flex flex-row ">
           <Button
-            children={<FaAngleDoubleLeft />}
+            children={<FaAngleLeft />}
             className="arrow-prev"
             onClick={handlePrevClick}
           />
@@ -92,13 +120,13 @@ export const CalendarHeader = ({
           <Button
             className="arrow-next"
             onClick={handleNextClick}
-            children={<FaAngleDoubleRight />}
+            children={<FaAngleRight />}
           />
         </div>
 
         <div className="view-btn-wrapper">
           <Button className="view-btn" onClick={handleDropdown}>
-            Zobrazení{" "}
+            {viewInfo()}
             <span>
               <MdOutlineKeyboardArrowDown size={20} />
             </span>
@@ -106,31 +134,38 @@ export const CalendarHeader = ({
 
           {openDropdown && (
             <div ref={dropdownRef} className="dropdown-calendar-header">
-              <Button
-                className="list-view-btn"
-                children="List"
-                onClick={() => {
-                  setView(View.list);
-                  setOpenDropdown(false);
-                }}
-              />
-              <Button
-                className="month-view-btn"
-                children="Měsíční"
-                onClick={() => {
-                  setView(View.month);
-                  setOpenDropdown(false);
-                }}
-              />
+              {view !== "day" && (
+                <Button
+                  onClick={() => {
+                    setView(View.day);
+                    setOpenDropdown(false);
+                  }}
+                  className="day-view-btn"
+                  children="Den"
+                />
+              )}
 
-              <Button
-                onClick={() => {
-                  setView(View.day);
-                  setOpenDropdown(false);
-                }}
-                className="day-view-btn"
-                children="Denní"
-              />
+              {view != "list" && (
+                <Button
+                  className="list-view-btn"
+                  children="Agenda"
+                  onClick={() => {
+                    setView(View.list);
+                    setOpenDropdown(false);
+                  }}
+                />
+              )}
+
+              {view != "month" && (
+                <Button
+                  className="month-view-btn"
+                  children="Měsíc"
+                  onClick={() => {
+                    setView(View.month);
+                    setOpenDropdown(false);
+                  }}
+                />
+              )}
             </div>
           )}
         </div>
@@ -140,8 +175,8 @@ export const CalendarHeader = ({
           onClick={AddEventCurrentDay}
           children={
             <div className="add-btn-content">
-              <span>Nová událost</span>
               <FaPlus size={12} />
+              <span>Vytvořit</span>
             </div>
           }
         />

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { EventType, ModalState } from "../types/event";
 import { View } from "../types/event";
 import { updateClickedDay } from "../utils/events";
@@ -19,16 +19,29 @@ export const useCalendar = (initialsEvents: EventType[]) => {
   );
   const [day, setDay] = useState(currentDate.getDate());
   const [addEvent, setAddEvent] = useState(false);
-
+  let [width, setWidth] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const d = (y: number, m: number) => new Date(y, m, 0).getDate();
   const daysInMonth = d(year, month);
-  // const [dateInAdd, setDateinAdd] = useState(false);
+
+  const checkView = () => {
+    useEffect(() => {
+      const handleWidth = () => {
+        setWidth(window.innerWidth);
+      };
+
+      window.addEventListener("resize", handleWidth);
+      handleWidth();
+      return () => {
+        window.removeEventListener("resize", handleWidth);
+      };
+    }, [setWidth]);
+    return width;
+  };
+  const widthOfScreen = checkView();
 
   const addEventCurrentDay = (info?: string) => {
-    // const today = new Date();
     let fillDate: string | undefined;
-
     if (info === "adding-from-event-list") {
       fillDate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
     }
@@ -41,51 +54,17 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     date: { day: number; month: number; year: number },
     data?: EventType[],
   ) => {
-    console.log(date);
+    if (widthOfScreen < 1024) {
+      setView(View.day);
+    }
+
     setDay(date.day);
     setMonth(date.month);
     setYear(date.year);
     setEventList(Array.isArray(data) ? data : []);
   };
 
-  const nextDay = () => {
-    setDay((prevDay) => {
-      let newDay = prevDay + 1;
-      let newMonth = month;
-      let newYear = year;
-      const daysInCurrentMonth = new Date(year, month, 0).getDate();
-
-      if (newDay > daysInCurrentMonth) {
-        newDay = 1;
-        newMonth = month === 12 ? 1 : month + 1;
-        newYear = month === 12 ? year + 1 : year;
-        setMonth(newMonth);
-        setYear(newYear);
-      }
-
-      setEventList(filterEV(newYear, newMonth, newDay, initialsEvents));
-      return newDay;
-    });
-  };
-
-  const prevDay = () => {
-    setDay((prevDay) => {
-      let newDay = prevDay - 1;
-      let newMonth = month;
-      let newYear = year;
-
-      if (newDay < 1) {
-        newMonth = month === 1 ? 12 : month - 1;
-        newYear = month === 1 ? year - 1 : year;
-        newDay = new Date(newYear, newMonth, 0).getDate();
-        setMonth(newMonth);
-        setYear(newYear);
-      }
-
-      setEventList(filterEV(newYear, newMonth, newDay, initialsEvents));
-      return newDay;
-    });
-  };
+  
 
   const actualDate = (months: { [key: number]: string }) => {
     const date = `${day}. ${months[month]}`;
@@ -94,29 +73,71 @@ export const useCalendar = (initialsEvents: EventType[]) => {
 
   const [animate, setAnimate] = useState("");
 
-  const handleNextClick = () => {
+  const handleNextClick = (type?: string) => {
+    if ((view == View.day && width < 1200) || type == "day-view") {
+      setDay((prevDay) => {
+        let newDay = prevDay + 1;
+        let newMonth = month;
+        let newYear = year;
+        const daysInCurrentMonth = new Date(year, month, 0).getDate();
+
+        if (newDay > daysInCurrentMonth) {
+          newDay = 1;
+          newMonth = month === 12 ? 1 : month + 1;
+          newYear = month === 12 ? year + 1 : year;
+          setMonth(newMonth);
+          setYear(newYear);
+        }
+
+        setEventList(filterEV(newYear, newMonth, newDay, initialsEvents));
+        return newDay;
+      });
+      return;
+    }
+
     if (month == 12) {
       setMonth(1);
       setYear((prev) => prev + 1);
     } else setMonth((prev) => prev + 1);
 
-    setAnimate("slide-left"); // spustíme animaci
+    setAnimate("slide-left"); 
     setTimeout(() => {
-      setAnimate(""); // po animaci odstraníme třídu
-      // sem dej funkci pro změnu měsíce/dne
-    }, 300); // délka animace v ms
+      setAnimate(""); 
+    }, 300); 
   };
 
-  const handlePrevClick = () => {
+  const handlePrevClick = (type?: string) => {
+    if ((view == View.day && width < 1200) || type == "day-view") {
+      setDay((prevDay) => {
+        let newDay = prevDay - 1;
+        let newMonth = month;
+        let newYear = year;
+
+        if (newDay < 1) {
+          newMonth = month === 1 ? 12 : month - 1;
+          newYear = month === 1 ? year - 1 : year;
+          newDay = new Date(newYear, newMonth, 0).getDate();
+          setMonth(newMonth);
+          setYear(newYear);
+        }
+
+        setEventList(filterEV(newYear, newMonth, newDay, initialsEvents));
+        return newDay;
+      });
+      return;
+    }
+
     if (month == 1) {
       setMonth(12);
       setYear((prev) => prev - 1);
     } else setMonth((prev) => prev - 1);
+
     setAnimate("slide-right");
     setTimeout(() => {
       setAnimate("");
     }, 300);
   };
+
   const handleTodayClick = () => {
     setMonth(currentDate.getMonth() + 1);
     setYear(currentDate.getFullYear());
@@ -182,8 +203,8 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     view,
     setView,
     eventList,
-    nextDay,
-    prevDay,
+    // nextDay,
+    // prevDay,
     actualDate,
     daysInMonth,
     day,
@@ -193,5 +214,6 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     setModalState,
     modalState,
     animate,
+    width,
   };
 };

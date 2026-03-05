@@ -15,6 +15,7 @@ interface Props {
   className?: string;
   showSelectedEvent?: (e: EventType) => void;
   deleteEvent?: (data: Object) => void;
+  width?: number;
 }
 
 export const DayEvent = ({
@@ -24,6 +25,7 @@ export const DayEvent = ({
   className,
   showSelectedEvent,
   deleteEvent,
+  width,
 }: Props) => {
   const openModal = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -44,7 +46,10 @@ export const DayEvent = ({
       onChange: deleteEvent!,
     });
 
-  const isDouble = totalEvents <= 3;
+  let isDouble = totalEvents <= 3;
+  if (width != undefined && width < 1024) {
+    isDouble = totalEvents <= 2;
+  }
 
   if (!isDouble && className == "month-grid-event") {
     return (
@@ -143,7 +148,7 @@ export const DayEvent = ({
             <p
               className="mr-1"
               style={{
-                width: "80px",
+                width: width != undefined && width < 500 ? "25px" : "60px",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
                 overflow: "hidden",
@@ -151,7 +156,11 @@ export const DayEvent = ({
             >
               {events.event}
             </p>
-            <p className="ml-1 justify-content-end ">{startTime}</p>
+            <p className="ml-1 justify-content-end ">
+              {width != undefined && width < 900
+                ? startTime.slice(0, 2)
+                : startTime}
+            </p>
           </div>
         </div>
       ) : undefined}
