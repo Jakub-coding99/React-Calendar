@@ -1,5 +1,6 @@
 import type { EventType } from "../types/event";
 import { DayEvent } from "./DayEvent";
+import { FaAngleLeft, FaAngleRight, FaPlus } from "react-icons/fa";
 
 interface Props {
   events?: EventType[];
@@ -25,21 +26,37 @@ export const EventList = ({
   return (
     <div className="day-event-list-wrapper">
       <div className="day-event-header">
-        <h3>Denní Události</h3>
-        <h5>{eventDate}</h5>
+        <div className="d-flex flex-row align-items-center">
+          <h3>{eventDate}</h3>
+          {width < 1200 && (
+            <button
+              className="add-btn-event-list"
+              onClick={() => addEventCurrentDay?.("adding-from-event-list")}
+              aria-label="Přidat událost"
+            >
+              <FaPlus />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="day-event-nav">
         {width > 1200 && (
-          <div>
-            <button onClick={() => prevDay("day-view")}>Předchozí</button>
-            <button onClick={() => nextDay("day-view")}>Další</button>
+          <div className="d-flex flex-row">
+            <button className="arrow-prev" onClick={() => prevDay("day-view")}>
+              <FaAngleLeft></FaAngleLeft>
+            </button>
+            <button className="arrow-next" onClick={() => nextDay("day-view")}>
+              <FaAngleRight />
+            </button>
+            <button
+              className="add-btn-event-list"
+              onClick={() => addEventCurrentDay?.("adding-from-event-list")}
+            >
+              <FaPlus></FaPlus>
+            </button>
           </div>
         )}
-
-        <button onClick={() => addEventCurrentDay?.("adding-from-event-list")}>
-          Přidat
-        </button>
       </div>
 
       <div className="day-event-list">

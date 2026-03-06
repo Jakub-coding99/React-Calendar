@@ -10,6 +10,7 @@ import { HiOutlineCalendarDateRange } from "react-icons/hi2";
 import { formatToPrettyDate } from "../utils/date";
 import { TbClockHour4 } from "react-icons/tb";
 import { MdNotes } from "react-icons/md";
+import { FaLocationDot } from "react-icons/fa6";
 
 interface Props {
   e: EventType;
@@ -148,7 +149,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
           )}
           {isShow && (
             <div className="d-flex flex-column gap-4">
-              <div className="modal-header-show d-flex flex-row d-flex justify-content-between align-items-center  w-100">
+              <div className="modal-header-show  d-flex flex-row d-flex justify-content-between align-items-center   w-100">
                 <div
                   className="header-dot"
                   style={{
@@ -159,7 +160,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                   }}
                 ></div>
 
-                <div className="d-flex flex-row ms-auto">
+                <div className="d-flex flex-row ms-auto  ">
                   <Button
                     className="icon-btn"
                     onClick={() => {
@@ -171,7 +172,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                   <Button className="icon-btn delete" onClick={triggerDelete}>
                     <RiDeleteBin6Line />
                   </Button>
-                  <Button className="icon-btn" onClick={onClose}>
+                  <Button className="icon-btn close" onClick={onClose}>
                     <IoMdClose />
                   </Button>
                 </div>
@@ -224,6 +225,15 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                     </div>
                   </div>
                 ) : undefined}
+
+                {e.location ? (
+                  <div className="event-location">
+                    <div className="location-icon">
+                      <FaLocationDot />
+                    </div>
+                    <p>{e.location}</p>
+                  </div>
+                ) : undefined}
               </div>
             </div>
           )}
@@ -235,7 +245,9 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
               children="Opravdu chcete událost smazat?"
             />
           )}
-          <div className="modal-actions">
+          <div
+            className={`modal-actions  ${!isEdit ? "justify-content-center" : undefined}`}
+          >
             {isEdit && (
               <>
                 <Button

@@ -113,10 +113,7 @@ export const DayEvent = ({
                 <MdNotes />
               </div>
 
-              <p>
-                jhlk jlkjlkkkk llkklklk
-                kkljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj
-              </p>
+              <p>{events.note}</p>
             </div>
           ) : undefined}
 
@@ -125,7 +122,7 @@ export const DayEvent = ({
               <div className="location-icon">
                 <FaLocationDot />
               </div>
-              <p>Ostrava</p>
+              <p>{events.location}</p>
             </div>
           ) : undefined}
         </div>
@@ -189,10 +186,11 @@ export const DayEvent = ({
             </div>
             <span
               style={{
-                overflowY: "auto",
                 width: "100%",
-                whiteSpace: "pre-line",
-                maxHeight: "50%",
+                textOverflow: "ellipsis",
+                height: "30px",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
               }}
             >
               {events.note}

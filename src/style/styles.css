@@ -180,6 +180,26 @@ body {
   transition: var(--transition);
 }
 
+.add-btn-event-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--primary-hover) 100%
+  );
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 10px 20px;
+  height: 40px;
+  min-width: 60px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  transition: var(--transition);
+}
 .add-btn:hover {
   box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
   transform: translateY(-2px);
@@ -497,6 +517,8 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   height: 70vh;
+  width: 65%;
+  margin: auto;
 }
 
 .event-list-view {
@@ -504,6 +526,8 @@ body {
   background-color: var(--bg-white);
   box-shadow: 0 5px 25px 8px rgb(238, 238, 238);
   overflow-y: auto;
+  border-radius: 10px;
+  margin: 5px;
 }
 
 .event-list-view:hover {
@@ -514,13 +538,13 @@ body {
 
 .month-list-view {
   background-color: var(--bg-white);
-  height: 16vh;
+  height: 17vh;
   width: 95%;
   padding: 10px;
   margin: 15px auto;
   border: 0.5px solid rgb(234, 233, 233);
   display: grid;
-  grid-template-columns: 10% 90%;
+  grid-template-columns: 15% 85%;
   min-width: 0;
   min-height: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -614,15 +638,25 @@ body {
   color: #555;
 }
 
+.day-event-nav {
+  display: flex;
+  position: relative;
+
+  justify-content: space-evenly;
+}
+
+.day-event-nav::after {
+  position: absolute;
+  content: "";
+  height: 0.5px;
+  width: 100%;
+  background-color: var(--border);
+  bottom: -5px;
+  left: 0;
+}
+
 .day-event-nav button {
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #bbb;
-  background-color: var(--bg-white);
-  cursor: pointer;
-  margin-right: 6px;
-  transition: var(--transition);
-  font-size: 0.875rem;
+  margin: 10px;
 }
 
 .day-event-list-wrapper button:hover {
@@ -645,7 +679,7 @@ body {
 .event-note,
 .event-location {
   display: grid;
-  grid-template-columns: 15% 90%;
+  grid-template-columns: 10% 90%;
   align-items: center;
 }
 
@@ -658,6 +692,7 @@ body {
 
 .event-location p {
   font-weight: 500;
+  margin: auto 0;
 }
 
 .note-icon,
@@ -675,6 +710,11 @@ body {
   white-space: nowrap;
   text-overflow: ellipsis;
   flex: 1;
+}
+
+.day-event-header h5 {
+  font-weight: bold;
+  color: var(--secondary);
 }
 
 /* =========================
@@ -701,7 +741,12 @@ body {
 }
 
 .icon-btn svg {
-  font-size: 1.375rem;
+  font-size: 1.5rem;
+}
+
+.icon-btn.close {
+  color: rgb(73, 73, 73);
+  font-weight: bold;
 }
 
 .icon-btn:focus {
@@ -862,6 +907,10 @@ body {
   border-color: var(--secondary);
 }
 
+.modal-header-show button {
+  margin: 10px;
+}
+
 /* =========================
    Color Picker
 ========================= */
@@ -1017,13 +1066,27 @@ body {
    Responsive
 ========================= */
 
+@media (max-width: 1450px) {
+  .calendar-wrapper {
+    grid-template-columns: 65% 35%;
+  }
+  .month-list-view {
+    grid-template-columns: 25% 75%;
+    height: 120px;
+  }
+
+  .add-btn {
+    margin: auto;
+  }
+}
+
 @media (max-width: 1200px) {
   html {
     font-size: 15px;
   }
 
   .wrapper {
-    width: 80vw;
+    width: 75vw;
   }
 
   .day-view-btn {
@@ -1042,6 +1105,23 @@ body {
     grid-template-columns: 100%;
     gap: 10px;
   }
+
+  .add-btn-event-list {
+    margin-left: auto;
+  }
+
+  .list-content,
+  .day-event-list-wrapper {
+    max-width: 80%;
+    margin: auto auto;
+  }
+
+  .month-list-view {
+    grid-template-columns: 20% 80%;
+  }
+  .bigger-span {
+    font-size: 1.2rem;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -1050,13 +1130,17 @@ body {
   }
 
   .wrapper {
-    width: 85vw;
+    width: 80vw;
     padding: 20px;
+    height: 100%;
   }
 
   .calendar-body {
     width: 100%;
     padding: 10px;
+  }
+  .calendar-body-left {
+    padding: 0;
   }
 
   #calendar {
@@ -1124,6 +1208,20 @@ body {
 
   .plus-icon {
     font-size: 1.125rem;
+  }
+
+  .day-event-list-wrapper,
+  .list-content {
+    min-height: 50vh;
+    max-height: 60vh;
+    padding: 25px;
+    max-width: 85vw;
+    margin: auto auto;
+  }
+
+  .bigger-span,
+  .day-marker-list {
+    font-size: 1.15rem;
   }
 }
 
@@ -1231,15 +1329,13 @@ body {
     padding: 16px;
   }
 
-  .day-event-list-wrapper {
+  .day-event-list-wrapper,
+  .list-content {
     min-height: 50vh;
     max-height: 60vh;
-    padding: 10px;
-  }
-
-  .month-list-view {
-    width: 100%;
-    height: auto;
+    padding: 15px;
+    max-width: 85vw;
+    margin: auto auto;
   }
 
   .day-marker-list {
@@ -1254,6 +1350,11 @@ body {
   .month-grid-event-dotted {
     width: 15px;
     height: 15px;
+  }
+
+  .bigger-span,
+  .day-marker-list {
+    font-size: 1.1rem;
   }
 }
 
@@ -1272,7 +1373,7 @@ body {
   }
 
   .header-date-wrapper {
-    justify-content: flex-start;
+    justify-content: flex-end;
   }
 
   .direction-btns {
@@ -1320,5 +1421,12 @@ body {
   .month-grid-event {
     height: 15px;
     font-size: 0.75rem;
+  }
+
+  .bigger-span {
+    font-size: 1rem;
+  }
+  .month-list-view {
+    max-height: 100px;
   }
 }

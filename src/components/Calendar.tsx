@@ -308,7 +308,7 @@ export const Calendar = () => {
         </div>
       </div>
 
-      {modalState && modalState.event && (
+      {modalState && (
         <div id="modal-overlay" onClick={() => setModalState(null)}>
           <div onClick={(e) => e.stopPropagation()}>
             <Modal
