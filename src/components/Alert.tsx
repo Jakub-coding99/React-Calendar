@@ -10,8 +10,8 @@ interface Props {
 export const Alert = ({ children, confirm, close }: Props) => {
   return (
     <>
-      <div className="alert-wrapper">
-        <div className="alert-window">
+      <div className="alert-wrapper p-3 ">
+        <div className="alert-window border border-secondary">
           <div className="warning-alert">
             <IoIosWarning size={65} />
           </div>

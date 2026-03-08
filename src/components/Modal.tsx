@@ -1,17 +1,15 @@
-import React, { use, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "./Button";
 import type { EventType } from "../types/event";
 import { Alert } from "./Alert";
 import { useDeleteEvent } from "../utils/eventActions";
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { IoMdClose } from "react-icons/io";
 import { HiOutlineCalendarDateRange } from "react-icons/hi2";
 import { formatToPrettyDate } from "../utils/date";
 import { TbClockHour4 } from "react-icons/tb";
 import { MdNotes } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
-import { IoIosWarning } from "react-icons/io";
 
 interface Props {
   e: EventType;
@@ -27,9 +25,11 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   const [to, setTo] = useState(e?.end.slice(11, 16) ?? "10:00");
   const [endDate, setEndDate] = useState(e?.end.slice(0, 10) ?? fillDate ?? "");
   const [title, setTitle] = useState(e?.event);
-
   const [eventColor, setEventColor] = useState("");
   const [showErrorMsg, setShowErrorMsg] = useState(false);
+  const [note, setNote] = useState("");
+  const [location, setLocation] = useState("");
+
   const isEdit = type === "edit";
   const isAdd = type === "add";
   const isShow = type === "show";
@@ -48,6 +48,8 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
       setFrom(e.start?.slice(11, 16) ?? "09:00");
       setEndDate(e.end?.slice(0, 10) ?? fillDate ?? "");
       setTo(e.end?.slice(11, 16) ?? "10:00");
+      setNote(e.note ?? "");
+      setLocation(e.location ?? "");
     }
   }, [e, fillDate]);
 
@@ -68,6 +70,8 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
           start: `${date}T${from}:00`,
           end: `${endDate}T${to}:00`,
           color: eventColor ? eventColor : e.color,
+          note: note,
+          location: location,
         },
       });
 
@@ -82,6 +86,8 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
           start: `${date}T${from}:00`,
           end: `${endDate}T${to}:00`,
           color: colors.includes(eventColor) ? eventColor : "#6594B1",
+          note: note,
+          location: location,
         },
       });
     }
@@ -113,13 +119,13 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
     <>
       <div id="modal">
         <div className="row mb-3">
-          <div className="col">
-            <span>{isAdd ? "Nová událost" : "Upravit událost"}</span>
+          <div className="col d-flex justify-content-center fw-bold">
+            <span>{isAdd ? "Nová událost" : undefined}</span>
           </div>
         </div>
 
         {(isEdit || isAdd) && (
-          <form onSubmit={submitEvent}>
+          <form id="event-form" onSubmit={submitEvent}>
             <div className="row mb-2">
               <div className="col-12">
                 <input
@@ -133,9 +139,9 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
               </div>
             </div>
 
-            <label>začátek</label>
+            <label className="mx-2">Začátek</label>
             <div className="row mb-2">
-              <div className="col-md-6">
+              <div className="col-6">
                 <input
                   type="date"
                   value={date}
@@ -146,7 +152,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                   className="form-control"
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-6">
                 <input
                   type="time"
                   value={from}
@@ -155,22 +161,24 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                 />
               </div>
             </div>
-            <label>konec</label>
+            <label className="mx-2">Konec</label>
             <div className="row mb-2">
-              <div className="col-md-6">
+              <div className="col-6">
                 <input
                   type="date"
                   value={endDate}
-                  className={`form-control ${!checkDateDiff ? "is-invalid" : ""}`}
+                  className={`form-control input-wrapper ${!checkDateDiff ? "is-invalid" : ""}`}
                   onChange={(e) => setEndDate(e.target.value)}
+                  // style={{ position: "relative", display: "inline" }}
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-6">
                 <input
                   type="time"
                   value={to}
-                  className={`form-control ${!checkDateDiff ? "is-invalid" : ""}`}
+                  className={`form-control input-wrapper ${!checkDateDiff ? "is-invalid" : ""}`}
                   onChange={(e) => setTo(e.target.value)}
+                  // style={{ position: "relative", display: "inline" }}
                 />
               </div>
             </div>
@@ -196,52 +204,50 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                 ></div>
               ))}
             </div>
-            <div className="row mb-2 align-items-center border border-secondary p-1">
-              <div className="col-auto">
-                <FaLocationDot size={20} />
-              </div>
-              <div className="col">
-                <input
-                  className="form-control border-0 shadow-none bg-transparent"
-                  type="text"
-                  placeholder="Přidat lokalitu"
-                />
-              </div>
-            </div>
-
-            <div className="row mb-2">
+            <div className="row mb-2 m-1">
               <div className="col-12">
-                <MdNotes />
-                <textarea
-                  className="form-control mt-1"
-                  placeholder="Přidat poznámku"
-                />
+                <div className="input-group">
+                  <span className="input-group-text bg-white border-0">
+                    <FaLocationDot size={20} />
+                  </span>
+                  <input
+                    type="text"
+                    className="form-control border-0 shadow-none"
+                    placeholder="Přidat lokalitu"
+                    onChange={(e) => setLocation(e.target.value)}
+                    value={location}
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="row mb-2">
-              <div className="col-auto">
-                <button type="submit" className="btn btn-primary">
-                  {type === "edit" ? "Uložit" : "Přidat"}
-                </button>
-              </div>
-              {isEdit && (
-                <div className="col-auto">
-                  <Button className="modal-delete" onClick={triggerDelete}>
-                    Smazat
-                  </Button>
+            <div className="row mb-2 m-1">
+              <div className="col-12">
+                <div className="input-group">
+                  <span className="input-group-text bg-white border-0">
+                    <MdNotes size={20} />
+                  </span>
+                  <textarea
+                    className="form-control border-0 shadow-none"
+                    placeholder="Přidat poznámku"
+                    rows={3}
+                    onChange={(e) => setNote(e.target.value)}
+                    value={note}
+                    style={{
+                      resize: "vertical",
+                      backgroundColor: "#f8f9fa",
+                      padding: "0.5rem",
+                      borderRadius: "0.25rem",
+                    }}
+                  />
                 </div>
-              )}
-              <div className="col-auto">
-                <Button className="modal-close" onClick={onClose}>
-                  Zavřít
-                </Button>
               </div>
             </div>
           </form>
         )}
+
         {isShow && (
-          <div className="row gap-4">
+          <div className="row gap-3">
             <div className="modal-header-show  d-flex flex-row d-flex justify-content-between align-items-center   w-100">
               <div
                 className="header-dot"
@@ -270,17 +276,17 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
               <div></div>
             </div>
 
-            <div className="modal-show-details">
-              <h2 className="fw-bold my-3">{e?.event}</h2>
-              <span className="d-flex flex-row gap-2 my-3">
+            <div className="modal-show-details m-2">
+              <h2 className="fw-bold my-3 mb-4">{e?.event}</h2>
+              <span className="d-flex flex-row mb-3 my-3 align-items-center">
                 <HiOutlineCalendarDateRange size={28} />
-                <p>
+                <p className="m-2">
                   {e.start.split("T")[0] === e.end.split("T")[0]
                     ? formatToPrettyDate(e.start.split("T")[0])
                     : `${formatToPrettyDate(e.start.split("T")[0])} - ${formatToPrettyDate(e.end.split("T")[0])}`}
                 </p>
               </span>
-              <span className="d-flex flex-row gap-2 my-3">
+              <span className="d-flex flex-row gap-2 mb-3 my-3">
                 <TbClockHour4 size={28} />
                 <p>
                   {e.start.split("T")[1]} - {e.end.split("T")[1]}
@@ -326,10 +332,8 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                 </div>
               ) : undefined}
             </div>
-            <div>
-              <Button className="icon-btn close" onClick={onClose}>
-                Zavřít
-              </Button>
+            <div className="col-auto d-flex justify-content-center">
+              <div className="d-flex justify-content-center"></div>
             </div>
           </div>
         )}
@@ -341,23 +345,38 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
             children="Opravdu chcete událost smazat?"
           />
         )}
+
         <div
           className={`modal-actions  ${!isEdit ? "justify-content-center" : undefined}`}
         >
-          {/* {isEdit && (
-              <>
-                <Button
-                  className="modal-delete"
-                  children="Smazat"
-                  onClick={triggerDelete}
-                />
-              </>
-            )}
-            <Button
-              className="modal-close"
-              children="Zavřít"
-              onClick={onClose}
-            /> */}
+          {isEdit && (
+            <div className="row">
+              <Button className="modal-delete m-3 p-3" onClick={triggerDelete}>
+                Smazat
+              </Button>
+            </div>
+          )}
+
+          {isAdd || isEdit ? (
+            <div className="row mb-2 d-flex justify-content-between">
+              <div className="col-auto">
+                <button
+                  type="submit"
+                  form="event-form"
+                  className="btn btn-primary m-3 p-3"
+                >
+                  {type === "edit" ? "Uložit" : "Přidat"}
+                </button>
+              </div>
+            </div>
+          ) : undefined}
+
+          <Button
+            className="modal-close bg-secondary text-white m-3 p-3"
+            onClick={onClose}
+          >
+            Zavřít
+          </Button>
         </div>
       </div>
     </>

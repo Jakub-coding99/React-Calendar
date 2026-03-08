@@ -815,16 +815,17 @@ body {
 }
 
 #modal {
-  width: 600px;
+  width: 500px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--radius);
-  padding: 24px;
+  padding: 28px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   animation: modalFade 0.2s ease-out;
-  max-height: 800px;
-  min-height: 450px;
+  max-height: 700px;
+  min-height: 300px;
+  overflow: auto;
 }
 
 #modal form {
@@ -843,13 +844,17 @@ body {
   transition: var(--transition);
 }
 
-.invalid-date::after {
+.input-wrapper {
+  position: relative;
+}
+
+.input-wrapper.is-invalid::after {
   content: "";
   position: absolute;
   top: 50%;
   left: 8px;
   right: 8px;
-  height: 1px;
+  height: 2px;
   background-color: red;
   pointer-events: none;
   transform: translateY(-50%);
@@ -1414,7 +1419,12 @@ body {
     max-width: 360px;
     max-height: 70vh;
     min-height: 300px;
-    padding: 12px;
+    padding: 20px;
+  }
+  input[type="date"],
+  input[type="time"] {
+    width: 100%;
+    min-width: 0;
   }
 
   .day-event-list-wrapper {
