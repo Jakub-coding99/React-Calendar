@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import { Button } from "./Button";
 import type { EventType } from "../types/event";
 import { Alert } from "./Alert";
@@ -11,6 +11,7 @@ import { formatToPrettyDate } from "../utils/date";
 import { TbClockHour4 } from "react-icons/tb";
 import { MdNotes } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
+import { IoIosWarning } from "react-icons/io";
 
 interface Props {
   e: EventType;
@@ -28,7 +29,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   const [title, setTitle] = useState(e?.event);
 
   const [eventColor, setEventColor] = useState("");
-
+  const [showErrorMsg, setShowErrorMsg] = useState(false);
   const isEdit = type === "edit";
   const isAdd = type === "add";
   const isShow = type === "show";
@@ -52,6 +53,12 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
 
   const submitEvent = (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
+
+    if (!checkDateDiff) {
+      setShowErrorMsg(true);
+      return;
+    }
+
     if (type == "edit") {
       onChange({
         type: "edit",
@@ -60,7 +67,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
           event: title,
           start: `${date}T${from}:00`,
           end: `${endDate}T${to}:00`,
-          color: e?.color,
+          color: eventColor ? eventColor : e.color,
         },
       });
 
@@ -82,173 +89,262 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   };
 
   const colors: string[] = [
-    "#EA7B7B",
-    "#6594B1",
-    "#84B179",
-    "#213C51",
-    "#D25353",
-    "#FACE68",
-    "#898AC4",
+    "#EF5350",
+    "#42A5F5",
+    "#66BB6A",
+    "#FFA726",
+    "#AB47BC",
+    "#26C6DA",
+    "#FFD54F",
+    "#90A4AE",
   ];
+  const checkDateDiff = useMemo(() => {
+    const t1 = new Date(`${date}T${from}`);
+    const t2 = new Date(`${endDate}T${to}`);
+    const dateDiff = t2.getTime() - t1.getTime();
+    const result = dateDiff > 0 ? true : false;
+    if (result) {
+      setShowErrorMsg(false);
+    }
+    return result;
+  }, [date, endDate, to, from]);
 
   return (
     <>
       <div id="modal">
-        <div className="d-flex flex-column justify-content-center">
-          {(isEdit || isAdd) && (
-            <form onSubmit={submitEvent}>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Název události"
-              />
+        <div className="row mb-3">
+          <div className="col">
+            <span>{isAdd ? "Nová událost" : "Upravit událost"}</span>
+          </div>
+        </div>
 
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                placeholder="date"
-              />
-              <input
-                type="time"
-                value={from}
-                onChange={(e) => setFrom(e.target.value)}
-              />
-
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-              <input
-                type="time"
-                value={to}
-                onChange={(e) => setTo(e.target.value)}
-              />
-              <div className="d-flex flex-row justify-content-center">
-                {colors.map((color, index) => (
-                  <div
-                    key={index}
-                    className={
-                      color == eventColor ? "color-pick choosen" : "color-pick"
-                    }
-                    onClick={() => setEventColor(color)}
-                    style={{
-                      background: color,
-                      color: color,
-                    }}
-                  ></div>
-                ))}
-              </div>
-
-              <button type="submit">
-                {type === "edit" ? "Uložit" : "Přidat"}
-              </button>
-            </form>
-          )}
-          {isShow && (
-            <div className="d-flex flex-column gap-4">
-              <div className="modal-header-show  d-flex flex-row d-flex justify-content-between align-items-center   w-100">
-                <div
-                  className="header-dot"
-                  style={{
-                    width: "25px",
-                    height: "25px",
-                    borderRadius: "50%",
-                    background: e?.color,
-                  }}
-                ></div>
-
-                <div className="d-flex flex-row ms-auto  ">
-                  <Button
-                    className="icon-btn"
-                    onClick={() => {
-                      onChange({ type: "switchToEdit", data: e });
-                    }}
-                  >
-                    <FaEdit />
-                  </Button>
-                  <Button className="icon-btn delete" onClick={triggerDelete}>
-                    <RiDeleteBin6Line />
-                  </Button>
-                  <Button className="icon-btn close" onClick={onClose}>
-                    <IoMdClose />
-                  </Button>
-                </div>
-
-                <div></div>
-              </div>
-              <div className="modal-show-details">
-                <h2 className="fw-bold my-3">{e?.event}</h2>
-                <span className="d-flex flex-row gap-2 my-3">
-                  <HiOutlineCalendarDateRange size={28} />
-                  <p>
-                    {e.start.split("T")[0] === e.end.split("T")[0]
-                      ? formatToPrettyDate(e.start.split("T")[0])
-                      : `${formatToPrettyDate(e.start.split("T")[0])} - ${formatToPrettyDate(e.end.split("T")[0])}`}
-                  </p>
-                </span>
-                <span className="d-flex flex-row gap-2 my-3">
-                  <TbClockHour4 size={28} />
-                  <p>
-                    {e.start.split("T")[1]} - {e.end.split("T")[1]}
-                  </p>
-                </span>
-
-                {e.note != undefined ? (
-                  <div className="d-flex flex-column">
-                    <span className="d-flex flex-row gap-2">
-                      <MdNotes size={28} />
-                      <p className="m-0">Poznámky</p>
-                    </span>
-
-                    <div
-                      style={{
-                        height: "20%",
-
-                        overflowY: "auto",
-                        overflowX: "hidden",
-                      }}
-                    >
-                      <p
-                        style={{
-                          background: "whiteSmoke",
-                          borderRadius: "8px",
-                          overflowY: "auto",
-                          overflowX: "hidden",
-                          padding: "8px",
-                        }}
-                      >
-                        {e.note}
-                      </p>
-                    </div>
-                  </div>
-                ) : undefined}
-
-                {e.location ? (
-                  <div className="event-location">
-                    <div className="location-icon">
-                      <FaLocationDot />
-                    </div>
-                    <p>{e.location}</p>
-                  </div>
-                ) : undefined}
+        {(isEdit || isAdd) && (
+          <form onSubmit={submitEvent}>
+            <div className="row mb-2">
+              <div className="col-12">
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Název události"
+                  required
+                  className="form-control"
+                />
               </div>
             </div>
-          )}
 
-          {showAlert && (
-            <Alert
-              confirm={handleDelete}
-              close={() => setShowAlert(false)}
-              children="Opravdu chcete událost smazat?"
-            />
-          )}
-          <div
-            className={`modal-actions  ${!isEdit ? "justify-content-center" : undefined}`}
-          >
-            {isEdit && (
+            <label>začátek</label>
+            <div className="row mb-2">
+              <div className="col-md-6">
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => {
+                    setDate(e.target.value);
+                    if (isAdd) setEndDate(e.target.value);
+                  }}
+                  className="form-control"
+                />
+              </div>
+              <div className="col-md-6">
+                <input
+                  type="time"
+                  value={from}
+                  onChange={(e) => setFrom(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            </div>
+            <label>konec</label>
+            <div className="row mb-2">
+              <div className="col-md-6">
+                <input
+                  type="date"
+                  value={endDate}
+                  className={`form-control ${!checkDateDiff ? "is-invalid" : ""}`}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
+              <div className="col-md-6">
+                <input
+                  type="time"
+                  value={to}
+                  className={`form-control ${!checkDateDiff ? "is-invalid" : ""}`}
+                  onChange={(e) => setTo(e.target.value)}
+                />
+              </div>
+            </div>
+            {showErrorMsg && (
+              <div className="d-flex justify-content-center error-form">
+                <div>Datum začátku musí být před datem konce!</div>
+              </div>
+            )}
+            <div className="d-flex flex-row justify-content-center">
+              {colors.map((color, index) => (
+                <div
+                  key={index}
+                  className={
+                    color == eventColor || (e?.color == color && !eventColor)
+                      ? "color-pick choosen"
+                      : "color-pick"
+                  }
+                  onClick={() => setEventColor(color)}
+                  style={{
+                    background: color,
+                    color: color,
+                  }}
+                ></div>
+              ))}
+            </div>
+            <div className="row mb-2 align-items-center border border-secondary p-1">
+              <div className="col-auto">
+                <FaLocationDot size={20} />
+              </div>
+              <div className="col">
+                <input
+                  className="form-control border-0 shadow-none bg-transparent"
+                  type="text"
+                  placeholder="Přidat lokalitu"
+                />
+              </div>
+            </div>
+
+            <div className="row mb-2">
+              <div className="col-12">
+                <MdNotes />
+                <textarea
+                  className="form-control mt-1"
+                  placeholder="Přidat poznámku"
+                />
+              </div>
+            </div>
+
+            <div className="row mb-2">
+              <div className="col-auto">
+                <button type="submit" className="btn btn-primary">
+                  {type === "edit" ? "Uložit" : "Přidat"}
+                </button>
+              </div>
+              {isEdit && (
+                <div className="col-auto">
+                  <Button className="modal-delete" onClick={triggerDelete}>
+                    Smazat
+                  </Button>
+                </div>
+              )}
+              <div className="col-auto">
+                <Button className="modal-close" onClick={onClose}>
+                  Zavřít
+                </Button>
+              </div>
+            </div>
+          </form>
+        )}
+        {isShow && (
+          <div className="row gap-4">
+            <div className="modal-header-show  d-flex flex-row d-flex justify-content-between align-items-center   w-100">
+              <div
+                className="header-dot"
+                style={{
+                  width: "25px",
+                  height: "25px",
+                  borderRadius: "50%",
+                  background: e?.color,
+                }}
+              ></div>
+
+              <div className="d-flex flex-row ms-auto  ">
+                <Button
+                  className="icon-btn"
+                  onClick={() => {
+                    onChange({ type: "switchToEdit", data: e });
+                  }}
+                >
+                  <FaEdit />
+                </Button>
+                <Button className="icon-btn delete" onClick={triggerDelete}>
+                  <RiDeleteBin6Line />
+                </Button>
+              </div>
+
+              <div></div>
+            </div>
+
+            <div className="modal-show-details">
+              <h2 className="fw-bold my-3">{e?.event}</h2>
+              <span className="d-flex flex-row gap-2 my-3">
+                <HiOutlineCalendarDateRange size={28} />
+                <p>
+                  {e.start.split("T")[0] === e.end.split("T")[0]
+                    ? formatToPrettyDate(e.start.split("T")[0])
+                    : `${formatToPrettyDate(e.start.split("T")[0])} - ${formatToPrettyDate(e.end.split("T")[0])}`}
+                </p>
+              </span>
+              <span className="d-flex flex-row gap-2 my-3">
+                <TbClockHour4 size={28} />
+                <p>
+                  {e.start.split("T")[1]} - {e.end.split("T")[1]}
+                </p>
+              </span>
+
+              {e.note != undefined ? (
+                <div className="d-flex flex-column">
+                  <span className="d-flex flex-row gap-2">
+                    <MdNotes size={28} />
+                    <p className="m-0">Poznámky</p>
+                  </span>
+
+                  <div
+                    style={{
+                      height: "20%",
+
+                      overflowY: "auto",
+                      overflowX: "hidden",
+                    }}
+                  >
+                    <p
+                      style={{
+                        background: "whiteSmoke",
+                        borderRadius: "8px",
+                        overflowY: "auto",
+                        overflowX: "hidden",
+                        padding: "8px",
+                      }}
+                    >
+                      {e.note}
+                    </p>
+                  </div>
+                </div>
+              ) : undefined}
+
+              {e.location ? (
+                <div className="event-location">
+                  <div className="location-icon">
+                    <FaLocationDot />
+                  </div>
+                  <p>{e.location}</p>
+                </div>
+              ) : undefined}
+            </div>
+            <div>
+              <Button className="icon-btn close" onClick={onClose}>
+                Zavřít
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {showAlert && (
+          <Alert
+            confirm={handleDelete}
+            close={() => setShowAlert(false)}
+            children="Opravdu chcete událost smazat?"
+          />
+        )}
+        <div
+          className={`modal-actions  ${!isEdit ? "justify-content-center" : undefined}`}
+        >
+          {/* {isEdit && (
               <>
                 <Button
                   className="modal-delete"
@@ -261,8 +357,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
               className="modal-close"
               children="Zavřít"
               onClick={onClose}
-            />
-          </div>
+            /> */}
         </div>
       </div>
     </>

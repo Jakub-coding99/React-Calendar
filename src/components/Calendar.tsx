@@ -88,6 +88,7 @@ export const Calendar = () => {
     setModalState,
     animate,
     width,
+    addEventCurrentDay,
   } = useCalendar(mockedEvents);
 
   const openAddModal = (fillData?: string) => {
@@ -250,7 +251,7 @@ export const Calendar = () => {
   };
 
   const renderedView = renderView();
-  console.log(width, "width");
+
   return (
     <>
       <div className="wrapper">
@@ -265,7 +266,7 @@ export const Calendar = () => {
             handlePrevClick={handlePrevClick}
             handleNextClick={handleNextClick}
             handleTodayClick={handleTodayClick}
-            AddEventCurrentDay={openAddModal}
+            AddEventCurrentDay={addEventCurrentDay}
             setView={setView}
             view={view}
           />

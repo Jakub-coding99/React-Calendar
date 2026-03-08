@@ -843,6 +843,26 @@ body {
   transition: var(--transition);
 }
 
+.invalid-date::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  background-color: red;
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.error-form {
+  color: rgb(254, 254, 254);
+  background-color: rgb(184, 20, 20);
+  border-radius: 5px;
+  padding: 10px;
+  font-weight: bolder;
+}
+
 #modal input:focus,
 #modal textarea:focus {
   border-color: var(--primary);

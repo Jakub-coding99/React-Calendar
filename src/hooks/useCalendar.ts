@@ -41,9 +41,13 @@ export const useCalendar = (initialsEvents: EventType[]) => {
   const widthOfScreen = checkView();
 
   const addEventCurrentDay = (info?: string) => {
-    let fillDate: string | undefined;
+    const todayDate = new Date().toISOString().split("T")[0];
+
+    let fillDate: string;
     if (info === "adding-from-event-list") {
       fillDate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    } else {
+      fillDate = todayDate;
     }
 
     setModalState({ action: "add", fillData: fillDate });
@@ -63,8 +67,6 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     setYear(date.year);
     setEventList(Array.isArray(data) ? data : []);
   };
-
-  
 
   const actualDate = (months: { [key: number]: string }) => {
     const date = `${day}. ${months[month]}`;
@@ -100,10 +102,10 @@ export const useCalendar = (initialsEvents: EventType[]) => {
       setYear((prev) => prev + 1);
     } else setMonth((prev) => prev + 1);
 
-    setAnimate("slide-left"); 
+    setAnimate("slide-left");
     setTimeout(() => {
-      setAnimate(""); 
-    }, 300); 
+      setAnimate("");
+    }, 300);
   };
 
   const handlePrevClick = (type?: string) => {
@@ -203,8 +205,7 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     view,
     setView,
     eventList,
-    // nextDay,
-    // prevDay,
+
     actualDate,
     daysInMonth,
     day,

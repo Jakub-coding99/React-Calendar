@@ -18,7 +18,7 @@ interface CalendarHeaderProps {
   handlePrevClick: () => void;
   handleNextClick: () => void;
   handleTodayClick: () => void;
-  AddEventCurrentDay: () => void;
+  AddEventCurrentDay: (info?: string) => void;
   months: { [key: number]: string };
   setView: React.Dispatch<React.SetStateAction<View>>;
   view: string;
@@ -172,7 +172,7 @@ export const CalendarHeader = ({
 
         <Button
           className="add-btn"
-          onClick={AddEventCurrentDay}
+          onClick={() => AddEventCurrentDay()}
           children={
             <div className="add-btn-content">
               <FaPlus size={12} />
@@ -184,7 +184,7 @@ export const CalendarHeader = ({
 
       <Button
         className="mobile-add-btn"
-        onClick={AddEventCurrentDay}
+        onClick={() => AddEventCurrentDay()}
         children={
           <div className="add-btn-content-mobile">
             <FaPlus className="plus-icon" />
