@@ -9,7 +9,6 @@ interface Props {
 }
 
 export const CalendarList = ({ events, onSelectEvent }: Props) => {
-  console.log(events);
   return (
     <>
       <div className="list-content">

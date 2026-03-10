@@ -70,7 +70,7 @@ export const CalendarHeader = ({
       case (view = View.month):
         return "Měsíc";
       case (view = View.list):
-        return "Agenda";
+        return "Seznam";
     }
   };
 
@@ -148,7 +148,7 @@ export const CalendarHeader = ({
               {view != "list" && (
                 <Button
                   className="list-view-btn"
-                  children="Agenda"
+                  children="Seznam"
                   onClick={() => {
                     setView(View.list);
                     setOpenDropdown(false);

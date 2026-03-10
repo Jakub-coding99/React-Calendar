@@ -18,23 +18,25 @@ import { CalendarHeader } from "./CalendarHeader";
 export const Calendar = () => {
   const mockedEvents = [
     {
-      event: "Střih",
+      event: "Střih-true",
       start: "2026-03-08T10:00",
       end: "2026-03-08T11:00",
       id: "1",
       color: "#EF5350",
       note: `lorem ipsum lorem ipsum`,
       location: "Ostrava",
+      msg_enabled: true,
     },
 
     {
-      event: "Melír",
+      event: "Melír-false",
       start: "2026-03-03T10:00",
       end: "2026-03-03T11:00",
       id: "2",
       color: "#42A5F5",
       note: `lorem ipsum lorem ipsum`,
       location: "Brno",
+      msg_enabled: false,
     },
     {
       event: "Střih",
@@ -42,6 +44,7 @@ export const Calendar = () => {
       end: "2026-03-04T11:00",
       id: "3",
       color: "#66BB6A",
+      msg_enabled: true,
     },
     {
       event: "Barva",
@@ -50,6 +53,7 @@ export const Calendar = () => {
       id: "4",
       color: "#FFA726",
       note: `lorem ipsum lorem ipsum`,
+      msg_enabled: false,
     },
     // {
     //   event: "Barva",

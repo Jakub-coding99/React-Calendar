@@ -15,15 +15,23 @@ export const listViewEvents = (
       }
 
       filteredEvents[date].push(ev);
+
       filteredEvents[date].sort(
         (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
       );
     });
 
-  const eventsArray = Object.entries(filteredEvents).map(([date, events]) => ({
-    date,
-    events,
-  }));
+  const eventsrray = Object.entries(filteredEvents);
+  console.log(eventsrray);
+
+  const eventsArray = Object.entries(filteredEvents)
+    .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime())
+    .map(([date, events]) => ({
+      date,
+      events: events.sort(
+        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+      ),
+    }));
 
   return eventsArray;
 };

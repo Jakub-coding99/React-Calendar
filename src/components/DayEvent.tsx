@@ -46,6 +46,24 @@ export const DayEvent = ({
       onChange: deleteEvent!,
     });
 
+  const countEventDuration = (
+    startDate: string,
+
+    endDate: string,
+  ) => {
+    const eventStart = new Date(startDate).getTime();
+    const eventEnd = new Date(endDate).getTime();
+    const result = (eventEnd - eventStart) / 1000 / 60;
+    if (result < 60) {
+      return `${result}m`;
+    } else {
+      const hours = Math.floor(result / 60);
+      const minutes = result % 60;
+
+      const res = minutes == 0 ? `${hours}h` : `${hours}h ${minutes}m`;
+      return res;
+    }
+  };
   let isDouble = totalEvents <= 3;
   if (width != undefined && width < 1024) {
     isDouble = totalEvents <= 2;
@@ -170,7 +188,9 @@ export const DayEvent = ({
         >
           <div className="month-list-left d-flex  align-items-center justify-content-between gap-2">
             <span className="bigger-span">{events.start.split("T")[1]}</span>
-            <span className="smaller-span">1h</span>
+            <span className="smaller-span d-flex ">
+              {countEventDuration(events.start, events.end)}
+            </span>
           </div>
           <div className="month-list-right d-flex flex-column justify-content-between gap-2">
             <div className="d-flex flex-row justify-content-between">

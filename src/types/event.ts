@@ -6,6 +6,7 @@ export interface EventType {
   color: string;
   note?: string;
   location?: string;
+  msg_enabled?: boolean;
 }
 
 export enum View {

@@ -544,7 +544,7 @@ body {
   margin: 15px auto;
   border: 0.5px solid rgb(234, 233, 233);
   display: grid;
-  grid-template-columns: 15% 85%;
+  grid-template-columns: 20% 80%;
   min-width: 0;
   min-height: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -825,7 +825,77 @@ body {
   animation: modalFade 0.2s ease-out;
   max-height: 700px;
   min-height: 300px;
-  overflow: auto;
+}
+
+/* Modern SMS Checkbox & Div */
+.sms-checkbox-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--bg-gray-50);
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin: 12px auto;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.08);
+  width: fit-content;
+}
+
+.sms-checkbox-row label {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+.sms-checkbox {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--primary);
+  border-radius: 6px;
+  background: var(--bg-white);
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.08);
+}
+
+.sms-checkbox:checked {
+  border-color: var(--success);
+  background: linear-gradient(135deg, var(--success) 0%, #34d399 100%);
+}
+
+.sms-checkbox:checked::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 7px;
+  height: 14px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+.sms-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-top: 18px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.modal-content {
+  overflow-y: auto;
+  max-height: 450px;
+  min-height: 200px;
+  overflow-x: hidden;
 }
 
 #modal form {
@@ -1096,7 +1166,7 @@ body {
     grid-template-columns: 65% 35%;
   }
   .month-list-view {
-    grid-template-columns: 25% 75%;
+    grid-template-columns: 30% 75%;
     height: 120px;
   }
 
@@ -1142,7 +1212,7 @@ body {
   }
 
   .month-list-view {
-    grid-template-columns: 20% 80%;
+    grid-template-columns: 30% 70%;
   }
   .bigger-span {
     font-size: 1.2rem;
@@ -1246,7 +1316,7 @@ body {
 
   .bigger-span,
   .day-marker-list {
-    font-size: 1.15rem;
+    font-size: 1.1rem;
   }
 }
 
@@ -1379,7 +1449,7 @@ body {
 
   .bigger-span,
   .day-marker-list {
-    font-size: 1.1rem;
+    font-size: 1.03rem;
   }
 }
 

@@ -10,6 +10,7 @@ import { formatToPrettyDate } from "../utils/date";
 import { TbClockHour4 } from "react-icons/tb";
 import { MdNotes } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
+import { FaCheck, FaTimes } from "react-icons/fa";
 
 interface Props {
   e: EventType;
@@ -29,6 +30,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   const [showErrorMsg, setShowErrorMsg] = useState(false);
   const [note, setNote] = useState("");
   const [location, setLocation] = useState("");
+  const [isChecked, setIsChecked] = useState(true);
 
   const isEdit = type === "edit";
   const isAdd = type === "add";
@@ -50,6 +52,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
       setTo(e.end?.slice(11, 16) ?? "10:00");
       setNote(e.note ?? "");
       setLocation(e.location ?? "");
+      setIsChecked(e.msg_enabled ?? true);
     }
   }, [e, fillDate]);
 
@@ -67,11 +70,12 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
         data: {
           id: e?.id,
           event: title,
-          start: `${date}T${from}:00`,
-          end: `${endDate}T${to}:00`,
+          start: `${date}T${from}`,
+          end: `${endDate}T${to}`,
           color: eventColor ? eventColor : e.color,
           note: note,
           location: location,
+          msg_enabled: isChecked,
         },
       });
 
@@ -83,11 +87,12 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
         data: {
           id: "10",
           event: title,
-          start: `${date}T${from}:00`,
-          end: `${endDate}T${to}:00`,
+          start: `${date}T${from}`,
+          end: `${endDate}T${to}`,
           color: colors.includes(eventColor) ? eventColor : "#6594B1",
           note: note,
           location: location,
+          msg_enabled: isChecked,
         },
       });
     }
@@ -104,6 +109,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
     "#FFD54F",
     "#90A4AE",
   ];
+  console.log(isChecked);
   const checkDateDiff = useMemo(() => {
     const t1 = new Date(`${date}T${from}`);
     const t2 = new Date(`${endDate}T${to}`);
@@ -118,132 +124,154 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   return (
     <>
       <div id="modal">
-        <div className="row mb-3">
-          <div className="col d-flex justify-content-center fw-bold">
-            <span>{isAdd ? "Nová událost" : undefined}</span>
+        <div className="modal-header">
+          <div className="row mb-3">
+            <div className="col d-flex justify-content-center fw-bold">
+              <span>{isAdd ? "Nová událost" : undefined}</span>
+            </div>
           </div>
         </div>
 
         {(isEdit || isAdd) && (
-          <form id="event-form" onSubmit={submitEvent}>
-            <div className="row mb-2">
-              <div className="col-12">
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Název události"
-                  required
-                  className="form-control"
-                />
-              </div>
-            </div>
-
-            <label className="mx-2">Začátek</label>
-            <div className="row mb-2">
-              <div className="col-6">
-                <input
-                  type="date"
-                  value={date}
-                  onChange={(e) => {
-                    setDate(e.target.value);
-                    if (isAdd) setEndDate(e.target.value);
-                  }}
-                  className="form-control"
-                />
-              </div>
-              <div className="col-6">
-                <input
-                  type="time"
-                  value={from}
-                  onChange={(e) => setFrom(e.target.value)}
-                  className="form-control"
-                />
-              </div>
-            </div>
-            <label className="mx-2">Konec</label>
-            <div className="row mb-2">
-              <div className="col-6">
-                <input
-                  type="date"
-                  value={endDate}
-                  className={`form-control input-wrapper ${!checkDateDiff ? "is-invalid" : ""}`}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  // style={{ position: "relative", display: "inline" }}
-                />
-              </div>
-              <div className="col-6">
-                <input
-                  type="time"
-                  value={to}
-                  className={`form-control input-wrapper ${!checkDateDiff ? "is-invalid" : ""}`}
-                  onChange={(e) => setTo(e.target.value)}
-                  // style={{ position: "relative", display: "inline" }}
-                />
-              </div>
-            </div>
-            {showErrorMsg && (
-              <div className="d-flex justify-content-center error-form">
-                <div>Datum začátku musí být před datem konce!</div>
-              </div>
-            )}
-            <div className="d-flex flex-row justify-content-center">
-              {colors.map((color, index) => (
-                <div
-                  key={index}
-                  className={
-                    color == eventColor || (e?.color == color && !eventColor)
-                      ? "color-pick choosen"
-                      : "color-pick"
-                  }
-                  onClick={() => setEventColor(color)}
-                  style={{
-                    background: color,
-                    color: color,
-                  }}
-                ></div>
-              ))}
-            </div>
-            <div className="row mb-2 m-1">
-              <div className="col-12">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-0">
-                    <FaLocationDot size={20} />
-                  </span>
+          <div className="modal-content">
+            <form id="event-form" onSubmit={submitEvent}>
+              <div className="row mb-2">
+                <div className="col-12">
                   <input
                     type="text"
-                    className="form-control border-0 shadow-none"
-                    placeholder="Přidat lokalitu"
-                    onChange={(e) => setLocation(e.target.value)}
-                    value={location}
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Název události"
+                    required
+                    className="form-control"
                   />
                 </div>
               </div>
-            </div>
 
-            <div className="row mb-2 m-1">
-              <div className="col-12">
-                <div className="input-group">
-                  <span className="input-group-text bg-white border-0">
-                    <MdNotes size={20} />
-                  </span>
-                  <textarea
-                    className="form-control border-0 shadow-none"
-                    placeholder="Přidat poznámku"
-                    rows={3}
-                    onChange={(e) => setNote(e.target.value)}
-                    value={note}
-                    style={{
-                      resize: "vertical",
-                      backgroundColor: "#f8f9fa",
-                      padding: "0.5rem",
-                      borderRadius: "0.25rem",
+              <label className="mx-2">Začátek</label>
+              <div className="row mb-2">
+                <div className="col-6">
+                  <input
+                    type="date"
+                    value={date}
+                    onChange={(e) => {
+                      setDate(e.target.value);
+                      if (isAdd) setEndDate(e.target.value);
                     }}
+                    className="form-control"
+                  />
+                </div>
+                <div className="col-6">
+                  <input
+                    type="time"
+                    value={from}
+                    onChange={(e) => setFrom(e.target.value)}
+                    className="form-control"
                   />
                 </div>
               </div>
-            </div>
-          </form>
+              <label className="mx-2">Konec</label>
+              <div className="row mb-2">
+                <div className="col-6">
+                  <input
+                    type="date"
+                    value={endDate}
+                    className={`form-control input-wrapper ${
+                      !checkDateDiff ? "is-invalid" : ""
+                    }`}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
+                <div className="col-6">
+                  <input
+                    type="time"
+                    value={to}
+                    className={`form-control input-wrapper ${
+                      !checkDateDiff ? "is-invalid" : ""
+                    }`}
+                    onChange={(e) => setTo(e.target.value)}
+                  />
+                </div>
+              </div>
+              {showErrorMsg && (
+                <div className="d-flex justify-content-center error-form">
+                  <div>Datum začátku musí být před datem konce!</div>
+                </div>
+              )}
+              <div className="d-flex flex-row mb-2 justify-content-center">
+                {colors.map((color, index) => (
+                  <div
+                    key={index}
+                    className={
+                      color == eventColor || (e?.color == color && !eventColor)
+                        ? "color-pick choosen"
+                        : "color-pick"
+                    }
+                    onClick={() => setEventColor(color)}
+                    style={{
+                      background: color,
+                      color: color,
+                    }}
+                  ></div>
+                ))}
+              </div>
+
+              <div className="row mb-2 m-3 bg-white border-0 w-50 p-2 ">
+                <div className="d-flex align-items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="enable-sms"
+                    checked={isChecked}
+                    onChange={(e) => setIsChecked(e.target.checked)}
+                    style={{ width: "20px", height: "20px" }}
+                  />
+                  <label htmlFor="enable-sms" className="mb-0">
+                    Posílat SMS
+                  </label>
+                </div>
+              </div>
+
+              <div className="row mb-2 m-1">
+                <div className="col-12">
+                  <div className="input-group">
+                    <span className="input-group-text bg-white border-0">
+                      <FaLocationDot size={20} />
+                    </span>
+                    <input
+                      type="text"
+                      className="form-control border-0 shadow-none"
+                      placeholder="Přidat lokalitu"
+                      onChange={(e) => setLocation(e.target.value)}
+                      value={location}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="row mb-2 m-1">
+                <div className="col-12">
+                  <div className="input-group">
+                    <span className="input-group-text bg-white border-0">
+                      <MdNotes size={20} />
+                    </span>
+                    <textarea
+                      className="form-control border-0 shadow-none"
+                      placeholder="Přidat poznámku"
+                      rows={3}
+                      onChange={(e) => setNote(e.target.value)}
+                      value={note}
+                      style={{
+                        resize: "vertical",
+                        backgroundColor: "#f8f9fa",
+                        padding: "0.5rem",
+                        borderRadius: "0.25rem",
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
         )}
 
         {isShow && (
@@ -272,65 +300,80 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                   <RiDeleteBin6Line />
                 </Button>
               </div>
-
-              <div></div>
             </div>
+            <div className="modal-content">
+              <div className="modal-show-details m-2">
+                <h2 className="fw-bold my-3 mb-4">{e?.event}</h2>
+                <span className="d-flex flex-row mb-3 my-3 align-items-center">
+                  <HiOutlineCalendarDateRange size={28} />
+                  <p className="m-2">
+                    {e.start.split("T")[0] === e.end.split("T")[0]
+                      ? formatToPrettyDate(e.start.split("T")[0])
+                      : `${formatToPrettyDate(
+                          e.start.split("T")[0],
+                        )} - ${formatToPrettyDate(e.end.split("T")[0])}`}
+                  </p>
+                </span>
+                <span className="d-flex flex-row gap-2 mb-3 my-3">
+                  <TbClockHour4 size={28} />
+                  <p>
+                    {e.start.split("T")[1]} - {e.end.split("T")[1]}
+                  </p>
+                </span>
 
-            <div className="modal-show-details m-2">
-              <h2 className="fw-bold my-3 mb-4">{e?.event}</h2>
-              <span className="d-flex flex-row mb-3 my-3 align-items-center">
-                <HiOutlineCalendarDateRange size={28} />
-                <p className="m-2">
-                  {e.start.split("T")[0] === e.end.split("T")[0]
-                    ? formatToPrettyDate(e.start.split("T")[0])
-                    : `${formatToPrettyDate(e.start.split("T")[0])} - ${formatToPrettyDate(e.end.split("T")[0])}`}
-                </p>
-              </span>
-              <span className="d-flex flex-row gap-2 mb-3 my-3">
-                <TbClockHour4 size={28} />
-                <p>
-                  {e.start.split("T")[1]} - {e.end.split("T")[1]}
-                </p>
-              </span>
+                {e.note != undefined ? (
+                  <div className="d-flex flex-column">
+                    <span className="d-flex flex-row gap-2">
+                      <MdNotes size={28} />
+                      <p className="m-0">Poznámky</p>
+                    </span>
 
-              {e.note != undefined ? (
-                <div className="d-flex flex-column">
-                  <span className="d-flex flex-row gap-2">
-                    <MdNotes size={28} />
-                    <p className="m-0">Poznámky</p>
-                  </span>
-
-                  <div
-                    style={{
-                      height: "20%",
-
-                      overflowY: "auto",
-                      overflowX: "hidden",
-                    }}
-                  >
-                    <p
+                    <div
                       style={{
-                        background: "whiteSmoke",
-                        borderRadius: "8px",
+                        height: "20%",
+
                         overflowY: "auto",
                         overflowX: "hidden",
-                        padding: "8px",
                       }}
                     >
-                      {e.note}
-                    </p>
+                      <p
+                        style={{
+                          background: "whiteSmoke",
+                          borderRadius: "8px",
+                          overflowY: "auto",
+                          overflowX: "hidden",
+                          padding: "8px",
+                        }}
+                      >
+                        {e.note}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ) : undefined}
+                ) : undefined}
 
-              {e.location ? (
-                <div className="event-location">
-                  <div className="location-icon">
-                    <FaLocationDot />
+                {e.location ? (
+                  <div className="event-location">
+                    <div className="location-icon">
+                      <FaLocationDot />
+                    </div>
+                    <p>{e.location}</p>
                   </div>
-                  <p>{e.location}</p>
+                ) : undefined}
+                <div className="row mt-3">
+                  <span className="sms-status-row">
+                    Posílat SMS:
+                    {e.msg_enabled ? (
+                      <FaCheck
+                        style={{ color: "#10b981", fontSize: "1.3em" }}
+                      />
+                    ) : (
+                      <FaTimes
+                        style={{ color: "#ef4444", fontSize: "1.3em" }}
+                      />
+                    )}
+                  </span>
                 </div>
-              ) : undefined}
+              </div>
             </div>
             <div className="col-auto d-flex justify-content-center">
               <div className="d-flex justify-content-center"></div>
@@ -347,7 +390,9 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
         )}
 
         <div
-          className={`modal-actions  ${!isEdit ? "justify-content-center" : undefined}`}
+          className={`modal-actions  ${
+            !isEdit ? "justify-content-center" : undefined
+          }`}
         >
           {isEdit && (
             <div className="row">
