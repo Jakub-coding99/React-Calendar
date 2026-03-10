@@ -3,9 +3,17 @@ import type { EventType, ModalState } from "../types/event";
 import { View } from "../types/event";
 import { updateClickedDay } from "../utils/events";
 import { filterEV, defaultToday } from "../utils/events";
+import { createEvent } from "../api/reservations";
 
 // EDIT EVENT FUNCTIONS
 export const useCalendar = (initialsEvents: EventType[]) => {
+  useEffect(() => {
+    if (initialsEvents.length > 0) {
+      setEvent(initialsEvents);
+      setEventList(defaultToday(initialsEvents, currentDate));
+    }
+  }, [initialsEvents]);
+
   const currentDate = new Date();
   const [modalState, setModalState] = useState<ModalState | null>(null);
 
@@ -171,6 +179,9 @@ export const useCalendar = (initialsEvents: EventType[]) => {
 
     if (data?.type === "add") {
       const newEvent = data?.data;
+      console.log(newEvent);
+      createEvent(newEvent);
+
       const newEvents = [...event, newEvent];
       setEvent(newEvents);
       setEventList(filterEV(year, month, day, newEvents));

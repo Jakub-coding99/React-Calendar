@@ -7,6 +7,7 @@ export interface EventType {
   note?: string;
   location?: string;
   msg_enabled?: boolean;
+  phone?: string;
 }
 
 export enum View {

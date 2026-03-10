@@ -14,62 +14,16 @@ import { useCalendar } from "../hooks/useCalendar";
 import { Modal } from "./Modal";
 import type { EventType } from "../types/event";
 import { CalendarHeader } from "./CalendarHeader";
+import { useQuery } from "@tanstack/react-query";
+
+import { fetchEvents } from "../api/reservations";
 
 export const Calendar = () => {
-  const mockedEvents = [
-    {
-      event: "Střih-true",
-      start: "2026-03-08T10:00",
-      end: "2026-03-08T11:00",
-      id: "1",
-      color: "#EF5350",
-      note: `lorem ipsum lorem ipsum`,
-      location: "Ostrava",
-      msg_enabled: true,
-    },
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["events"],
+    queryFn: fetchEvents,
+  });
 
-    {
-      event: "Melír-false",
-      start: "2026-03-03T10:00",
-      end: "2026-03-03T11:00",
-      id: "2",
-      color: "#42A5F5",
-      note: `lorem ipsum lorem ipsum`,
-      location: "Brno",
-      msg_enabled: false,
-    },
-    {
-      event: "Střih",
-      start: "2026-03-03T10:00",
-      end: "2026-03-04T11:00",
-      id: "3",
-      color: "#66BB6A",
-      msg_enabled: true,
-    },
-    {
-      event: "Barva",
-      start: "2026-03-12T10:00",
-      end: "2026-03-12T11:00",
-      id: "4",
-      color: "#FFA726",
-      note: `lorem ipsum lorem ipsum`,
-      msg_enabled: false,
-    },
-    // {
-    //   event: "Barva",
-    //   start: "2026-02-21T10:00",
-    //   end: "2026-03-04T11:00",
-    //   id: "5",
-    //   color: "green",
-    // },
-    // {
-    //   event: "test",
-    //   start: "2026-01-30T10:00",
-    //   end: "2026-01-30T11:00",
-    //   id: "6",
-    //   color: "green",
-    // },
-  ];
   const currentDate = new Date();
   const Today = formatDate(currentDate);
 
@@ -96,7 +50,7 @@ export const Calendar = () => {
     animate,
     width,
     addEventCurrentDay,
-  } = useCalendar(mockedEvents);
+  } = useCalendar(data ?? []);
 
   const openAddModal = (fillData?: string) => {
     setModalState({ action: "add", fillData });
@@ -320,7 +274,7 @@ export const Calendar = () => {
         <div id="modal-overlay" onClick={() => setModalState(null)}>
           <div onClick={(e) => e.stopPropagation()}>
             <Modal
-              e={modalState.event}
+              e={modalState.event!}
               onChange={handleChange}
               onClose={() => setModalState(null)}
               type={modalState.action}

@@ -85,7 +85,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
       onChange({
         type: "add",
         data: {
-          id: "10",
+          // id: "10",
           event: title,
           start: `${date}T${from}`,
           end: `${endDate}T${to}`,
@@ -93,6 +93,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
           note: note,
           location: location,
           msg_enabled: isChecked,
+          phone: "456455",
         },
       });
     }
@@ -109,7 +110,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
     "#FFD54F",
     "#90A4AE",
   ];
-  console.log(isChecked);
+
   const checkDateDiff = useMemo(() => {
     const t1 = new Date(`${date}T${from}`);
     const t2 = new Date(`${endDate}T${to}`);
