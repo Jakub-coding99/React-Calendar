@@ -206,6 +206,7 @@ export const Calendar = () => {
             }
             deleteEvent={handleChange}
             width={width}
+            onClick={openShowModal}
           />
         );
     }
@@ -263,6 +264,7 @@ export const Calendar = () => {
                   openAddModal(formatDateToDT(year, month, day))
                 }
                 deleteEvent={handleChange}
+                onClick={openShowModal}
                 width={width}
               />
             </div>

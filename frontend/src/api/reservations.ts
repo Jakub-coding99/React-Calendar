@@ -19,3 +19,25 @@ export const createEvent = async (data: EventType) => {
   const json = await res.json();
   return json; // API může vrátit ID nebo potvrzení
 };
+
+export const editEvent = async (data: EventType) => {
+  const res = await fetch(`${apiURL}update-event/${data.id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Origin": "*",
+    },
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+  const json = await res.json();
+  return json; // API může vrátit ID nebo potvrzení
+};
+
+export const deleteEvent = async (id: number) => {
+  const res = await fetch(`${apiURL}delete-event/${id}`, {
+    method: "DELETE",
+  });
+
+  if (res.status === 204) return null;
+  return res.json();
+};

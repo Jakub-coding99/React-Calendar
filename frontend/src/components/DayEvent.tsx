@@ -101,6 +101,7 @@ export const DayEvent = ({
           style={{
             borderLeft: `5px solid ${events.color}`,
           }}
+          onClick={() => showSelectedEvent?.(events)}
         >
           <div className="d-flex flex-row justify-content-between align-items-start mb-4 border-bottom border-secondary-subtle">
             <p className="event-title-event-list flex-grow-1 me-3 text-truncate">
@@ -110,7 +111,13 @@ export const DayEvent = ({
               <button className="icon-btn" onClick={openModal}>
                 <FaEdit />
               </button>
-              <button className="icon-btn delete" onClick={triggerDelete}>
+              <button
+                className="icon-btn delete"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  triggerDelete();
+                }}
+              >
                 <RiDeleteBin6Line />
               </button>
             </div>

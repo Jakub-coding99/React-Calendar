@@ -3,7 +3,7 @@ import type { EventType, ModalState } from "../types/event";
 import { View } from "../types/event";
 import { updateClickedDay } from "../utils/events";
 import { filterEV, defaultToday } from "../utils/events";
-import { createEvent } from "../api/reservations";
+import { createEvent, deleteEvent, editEvent } from "../api/reservations";
 
 // EDIT EVENT FUNCTIONS
 export const useCalendar = (initialsEvents: EventType[]) => {
@@ -161,25 +161,33 @@ export const useCalendar = (initialsEvents: EventType[]) => {
 
   const handleChange = (data?: any) => {
     if (data?.type === "edit") {
-      const id = data?.data?.id;
-      const updatedEvents = event.map((ev) =>
-        ev.id === id ? (ev = data.data) : ev,
-      );
-      setEvent(updatedEvents);
+      const editableEvent = data?.data;
+      if (!editableEvent) return;
+      editEvent(editableEvent);
 
+      const updatedEvents =
+        editableEvent.id == null
+          ? [...event, editableEvent]
+          : event.some((ev) => ev.id === editableEvent.id)
+            ? event.map((ev) =>
+                ev.id === editableEvent.id ? editableEvent : ev,
+              )
+            : [...event, editableEvent];
+      setEvent(updatedEvents);
       setEventList(filterEV(year, month, day, updatedEvents));
     }
     if (data?.type === "delete") {
       const id = data?.data?.id;
-      const updatedEvents = event.filter((ev) => ev.id !== id);
+      if (id == null) return;
 
+      deleteEvent(id);
+      const updatedEvents = event.filter((ev) => ev.id !== id);
       setEvent(updatedEvents);
       setEventList(filterEV(year, month, day, updatedEvents));
     }
 
     if (data?.type === "add") {
       const newEvent = data?.data;
-      console.log(newEvent);
       createEvent(newEvent);
 
       const newEvents = [...event, newEvent];

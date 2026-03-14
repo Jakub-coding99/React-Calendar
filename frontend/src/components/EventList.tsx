@@ -11,6 +11,7 @@ interface Props {
   onSelectEvent: (event: EventType) => void;
   deleteEvent?: () => void;
   width: number;
+  onClick: (event: EventType) => void
 }
 
 export const EventList = ({
@@ -22,10 +23,11 @@ export const EventList = ({
   addEventCurrentDay,
   deleteEvent,
   width,
+  onClick
 }: Props) => {
   return (
     <div className="day-event-list-wrapper">
-      <div className="day-event-header">
+      <div className="day-event-header" >
         <div className="d-flex flex-row align-items-center">
           <h3>{eventDate}</h3>
           {width < 1200 && (
@@ -67,6 +69,8 @@ export const EventList = ({
             onSelect={() => onSelectEvent(event)}
             className="event-list-view"
             deleteEvent={deleteEvent}
+            showSelectedEvent={() => onClick(event)}
+            
           />
         ))}
         {events?.length === 0 && (

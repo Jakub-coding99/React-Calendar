@@ -1,4 +1,4 @@
-from fastapi import FastAPI,APIRouter
+from fastapi import FastAPI,APIRouter,Response
 
 from pydantic import BaseModel,field_validator
 from database import create_db,select,Session,engine,Reservation
@@ -79,25 +79,30 @@ def create_event(r:ReservationModel):
             session.rollback()
             raise
             
-        return JSONResponse(content={"message":"Event successfuly created"},status_code=201)
+    return JSONResponse(content={"message":"Event successfuly created"},status_code=201)
     
-
-@router.get("/event/{id}")
-def get_event(id:int):
+##pridat vsechny moznosti
+@router.patch("/update-event/{id}")
+def edit_event(id:int,event:ReservationModel):
     with Session(engine) as session:
         db = session.get(Reservation,id)
         if not db:
-            return JSONResponse(content={"message":"Event with this ID not exist"},status_code=400)
-        return db
+            raise HTTPException(status_code=404, detail="Event with this ID does not exist")
+        
+        if len(event.event) > 0:
+            db.event = event.event
+        session.commit()
+
+    return JSONResponse(content={"message":"Event successfuly edited"},status_code=200)
 
 
-@router.delete("/event/{id}")
+@router.delete("/delete-event/{id}")
 def delete_event(id:int):
     with Session(engine) as session:
         db = session.get(Reservation,id)
         if not db:
-            return JSONResponse(content={"message":"Event with this ID not exist"},status_code=400)
+            raise HTTPException(status_code=404, detail="Event with this ID does not exist")
         session.delete(db)
         session.commit()
-        return JSONResponse(content={"message":"Event successfuly deleted"},status_code=204)
+    return Response(status_code=204)
 

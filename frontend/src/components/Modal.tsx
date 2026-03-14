@@ -3,7 +3,7 @@ import { Button } from "./Button";
 import type { EventType } from "../types/event";
 import { Alert } from "./Alert";
 import { useDeleteEvent } from "../utils/eventActions";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit,FaPhoneAlt } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { HiOutlineCalendarDateRange } from "react-icons/hi2";
 import { formatToPrettyDate } from "../utils/date";
@@ -11,6 +11,8 @@ import { TbClockHour4 } from "react-icons/tb";
 import { MdNotes } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
 import { FaCheck, FaTimes } from "react-icons/fa";
+
+
 
 interface Props {
   e: EventType;
@@ -31,6 +33,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
   const [note, setNote] = useState("");
   const [location, setLocation] = useState("");
   const [isChecked, setIsChecked] = useState(true);
+  const [phone,setPhone] = useState("")
 
   const isEdit = type === "edit";
   const isAdd = type === "add";
@@ -53,6 +56,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
       setNote(e.note ?? "");
       setLocation(e.location ?? "");
       setIsChecked(e.msg_enabled ?? true);
+      setPhone(e.phone ?? "")
     }
   }, [e, fillDate]);
 
@@ -76,6 +80,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
           note: note,
           location: location,
           msg_enabled: isChecked,
+          phone: phone
         },
       });
 
@@ -93,7 +98,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
           note: note,
           location: location,
           msg_enabled: isChecked,
-          phone: "456455",
+          phone: phone,
         },
       });
     }
@@ -217,6 +222,23 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                 ))}
               </div>
 
+                <div className="row mb-2 m-1">
+                <div className="col-12">
+                  <div className="input-group">
+                    <span className="input-group-text bg-white border-0">
+                      <FaPhoneAlt size={20} />
+                    </span>
+                    <input
+                      type="text"
+                      className="form-control border-0 shadow-none"
+                      placeholder="Telefonní číslo"
+                      onChange={(e) => setPhone(e.target.value)}
+                      value={phone}
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="row mb-2 m-3 bg-white border-0 w-50 p-2 ">
                 <div className="d-flex align-items-center gap-2">
                   <input
@@ -248,6 +270,8 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                   </div>
                 </div>
               </div>
+
+            
 
               <div className="row mb-2 m-1">
                 <div className="col-12">
@@ -323,7 +347,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                 </span>
 
                 {e.note != undefined ? (
-                  <div className="d-flex flex-column">
+                  <div className="d-flex flex-column mb-3 my-3 gap-2">
                     <span className="d-flex flex-row gap-2">
                       <MdNotes size={28} />
                       <p className="m-0">Poznámky</p>
@@ -331,7 +355,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
 
                     <div
                       style={{
-                        height: "20%",
+                        height: "15%",
 
                         overflowY: "auto",
                         overflowX: "hidden",
@@ -344,6 +368,7 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                           overflowY: "auto",
                           overflowX: "hidden",
                           padding: "8px",
+                          border: "1px solid #dee2e6",
                         }}
                       >
                         {e.note}
@@ -353,13 +378,21 @@ export const Modal = ({ e, onChange, onClose, type, fillDate }: Props) => {
                 ) : undefined}
 
                 {e.location ? (
-                  <div className="event-location">
+                  <div className="event-location mb-3 my-3 d-flex flex-row gap-2 align-items-center">
                     <div className="location-icon">
                       <FaLocationDot />
                     </div>
                     <p>{e.location}</p>
                   </div>
                 ) : undefined}
+
+                {e.phone ? (
+                  <span className="event-location mb-3 my-3 d-flex flex-row gap-2 align-items-center">
+                    <FaPhoneAlt size={20} />
+                    <p className="m-0">{e.phone}</p>
+                  </span>
+                ) : undefined}
+
                 <div className="row mt-3">
                   <span className="sms-status-row">
                     Posílat SMS:
