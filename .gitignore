@@ -27,3 +27,6 @@ dist-ssr
 .github/
 test.py
 backend/reserv_database.db
+backend/.venv/
+backend/__pycache__/
+.venv

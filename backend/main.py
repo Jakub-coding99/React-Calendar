@@ -5,7 +5,7 @@ from database import create_db
 from fastapi.middleware.cors import CORSMiddleware
 
 
-
+#TEST
 
 app = FastAPI()
 origins = ["http://localhost:5173"]
