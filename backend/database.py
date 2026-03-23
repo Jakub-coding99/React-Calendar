@@ -10,7 +10,6 @@ class Reservation(Base):
     __tablename__ = "reservation"
     id : Mapped[int] = mapped_column(primary_key= True)
     event: Mapped[str] = mapped_column(String(30))
-    phone: Mapped[str | None ] = mapped_column(String(15))
     start: Mapped[dt] = mapped_column(DateTime)
     end: Mapped[dt] = mapped_column(DateTime)
     note : Mapped[str | None]  = mapped_column(String(100))
@@ -19,17 +18,17 @@ class Reservation(Base):
     state: Mapped[str] = mapped_column(String(50))
     location: Mapped[str | None] = mapped_column(String(50))
     color:  Mapped[str] = mapped_column(String(50))
-    # work_type: Mapped[str | None] = mapped_column(String(15))
+    client_id:  Mapped[str] = mapped_column(String(50))
 
-#       event: string;
-#   start: string;
-#   end: string;
-#   id: string;
-#   color: string;
-#   note?: string;
-#   location?: string;
-#   msg_enabled?: boolean;
+class Clients(Base):
+    __tablename__ = "clients"
+    id : Mapped[int] = mapped_column(primary_key= True)
+    name: Mapped[str] = mapped_column(String(100))
+    phone: Mapped[str | None] = mapped_column(String(30))
+    email: Mapped[str | None] = mapped_column(String(30))
+    
 
+   
 fake_data = [ {
     "id": 1,
     "event": "Meeting with client",
@@ -57,6 +56,25 @@ fake_data = [ {
     "color": "green"
 }]
 
+fake_clients_data = [{
+    "id":1,
+    "name" : "Jakub",
+    "email": "email@email.com",
+    "phone": "987654321"
+},{
+    "id":2,
+    "name" : "Markéta",
+    "email": "marki@email.com",
+    "phone": "123456789"
+},
+{
+    "id":3,
+    "name" : "Honza",
+    "email": "jan@email.com",
+    "phone": "123456789"
+}
+]
+
 def populate_db():
     with Session(engine) as session:
         for item in fake_data:
@@ -76,6 +94,19 @@ def populate_db():
             session.add(reservation)
         session.commit()
 
+def fake_clients():
+    with Session(engine) as session:
+        for client in fake_clients_data:
+            clients = Clients(
+                id = client["id"],
+                name = client["name"],
+                phone = client["phone"],
+                email = client["email"]
+            )
+            session.add(clients)
+        session.commit()
+
+
 
 sqlite_file_name = "reserv_database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -85,3 +116,4 @@ def create_db():
     
     Base.metadata.create_all(engine)
     # populate_db()
+    # fake_clients()

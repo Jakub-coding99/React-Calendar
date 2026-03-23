@@ -4,8 +4,8 @@ import {
   FaAngleRight,
   FaPlus,
 } from "react-icons/fa";
-import { Button } from "./Button";
-import { View } from "../types/event";
+import { Button } from "../Button";
+import { View } from "../../types/event";
 import { useEffect, useState, useRef } from "react";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 

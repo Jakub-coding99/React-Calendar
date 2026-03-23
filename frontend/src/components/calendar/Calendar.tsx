@@ -7,21 +7,26 @@ import {
   formatDate,
   formatDateToDT,
   months,
-} from "../utils/date";
-import { listViewEvents } from "../utils/events";
-import { View } from "../types/event";
-import { useCalendar } from "../hooks/useCalendar";
-import { Modal } from "./Modal";
-import type { EventType } from "../types/event";
+} from "../../utils/date";
+import { listViewEvents } from "../../utils/events";
+import { View } from "../../types/event";
+import { useCalendar } from "../../hooks/useCalendar";
+import { Modal } from "../Modal";
+import type { EventType, ClientType } from "../../types/event";
 import { CalendarHeader } from "./CalendarHeader";
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchEvents } from "../api/reservations";
+import { fetchEvents, fetchClients } from "../../api/reservations";
 
 export const Calendar = () => {
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["events"],
     queryFn: fetchEvents,
+  });
+
+  const { data: clientsData } = useQuery({
+    queryKey: ["clients"],
+    queryFn: fetchClients,
   });
 
   const currentDate = new Date();
@@ -53,15 +58,15 @@ export const Calendar = () => {
   } = useCalendar(data ?? []);
 
   const openAddModal = (fillData?: string) => {
-    setModalState({ action: "add", fillData });
+    setModalState((prev) => ({ ...prev, action: "add", fillData }));
   };
 
   const openEditModal = (event: EventType) => {
-    setModalState({ action: "edit", event });
+    setModalState((prev) => ({ ...prev, action: "edit", event }));
   };
 
   const openShowModal = (event: EventType) => {
-    setModalState({ action: "show", event });
+    setModalState((prev) => ({ ...prev, action: "show", event }));
   };
 
   const eventsByDate: Record<string, EventType[]> = {};
@@ -281,6 +286,7 @@ export const Calendar = () => {
               onClose={() => setModalState(null)}
               type={modalState.action}
               fillDate={modalState.fillData}
+              clients={clientsData}
             />
           </div>
         </div>

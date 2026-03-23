@@ -3,7 +3,12 @@ import type { EventType, ModalState } from "../types/event";
 import { View } from "../types/event";
 import { updateClickedDay } from "../utils/events";
 import { filterEV, defaultToday } from "../utils/events";
-import { createEvent, deleteEvent, editEvent } from "../api/reservations";
+import {
+  createEvent,
+  deleteEvent,
+  editEvent,
+  getClient,
+} from "../api/reservations";
 
 // EDIT EVENT FUNCTIONS
 export const useCalendar = (initialsEvents: EventType[]) => {
@@ -16,6 +21,7 @@ export const useCalendar = (initialsEvents: EventType[]) => {
 
   const currentDate = new Date();
   const [modalState, setModalState] = useState<ModalState | null>(null);
+  // const [clients, setClients] = useState<ClientType | null>(null);
 
   const [month, setMonth] = useState(currentDate.getMonth() + 1);
   const [year, setYear] = useState(currentDate.getFullYear());
@@ -58,7 +64,7 @@ export const useCalendar = (initialsEvents: EventType[]) => {
       fillDate = todayDate;
     }
 
-    setModalState({ action: "add", fillData: fillDate });
+    setModalState((prev) => ({ ...prev, action: "add", fillData: fillDate }));
   };
   updateClickedDay(initialsEvents, month);
 
@@ -159,7 +165,7 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     }, 300);
   };
 
-  const handleChange = (data?: any) => {
+  const handleChange = async (data?: any) => {
     if (data?.type === "edit") {
       const editableEvent = data?.data;
       if (!editableEvent) return;
@@ -176,27 +182,47 @@ export const useCalendar = (initialsEvents: EventType[]) => {
       setEvent(updatedEvents);
       setEventList(filterEV(year, month, day, updatedEvents));
     }
+    ///FIX SENDING UNDEFINED ID
     if (data?.type === "delete") {
+      console.log("delete");
       const id = data?.data?.id;
+      console.log(id);
       if (id == null) return;
 
-      deleteEvent(id);
-      const updatedEvents = event.filter((ev) => ev.id !== id);
-      setEvent(updatedEvents);
-      setEventList(filterEV(year, month, day, updatedEvents));
+      try {
+        await deleteEvent(id);
+        const updatedEvents = event.filter((ev) => ev.id !== id);
+        setEvent(updatedEvents);
+        setEventList(filterEV(year, month, day, updatedEvents));
+      } catch (error) {
+        console.error("Mazání eventu selhalo:", error);
+        // případně zobrazit uživateli chybu
+      }
     }
 
     if (data?.type === "add") {
       const newEvent = data?.data;
-      createEvent(newEvent);
-
-      const newEvents = [...event, newEvent];
-      setEvent(newEvents);
-      setEventList(filterEV(year, month, day, newEvents));
+      console.log(newEvent);
+      const ev = await createEvent(newEvent);
+      const ok = ev.ok;
+      if (ok) {
+        const newEvents = [...event, newEvent];
+        setEvent(newEvents);
+        setEventList(filterEV(year, month, day, newEvents));
+      }
     }
-
+    //pridani klienta do dat
     if (data?.type == "switchToEdit") {
-      setModalState({ event: data.data, action: "edit" });
+      const client = await getClient(Number(data?.data.client_id));
+      const editableD = { ...data.data, client: client };
+
+      setModalState((prev) => ({ ...prev, event: editableD, action: "edit" }));
+    }
+    if (data?.type == "clientEditSwitch") {
+      setModalState((prev) => ({
+        ...prev,
+        action: "clientEditSwitch",
+      }));
     }
   };
   const hideInput = () => {

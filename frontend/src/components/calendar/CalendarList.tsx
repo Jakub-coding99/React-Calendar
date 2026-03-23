@@ -1,6 +1,6 @@
 import { DayEvent } from "./DayEvent";
-import type { EventType, listEventsType } from "../types/event";
-import { months } from "../utils/date";
+import type { EventType, listEventsType } from "../../types/event";
+import { months } from "../../utils/date";
 
 interface Props {
   events?: listEventsType[];

@@ -1,5 +1,5 @@
 import { DayEvent } from "./DayEvent";
-import type { EventType } from "../types/event";
+import type { EventType } from "../../types/event";
 
 interface Props {
   children?: number;

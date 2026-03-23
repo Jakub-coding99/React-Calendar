@@ -11,9 +11,9 @@ interface Props {
 export const useDeleteEvent = ({ e, onChange, onClose }: Props) => {
   const [showAlert, setShowAlert] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!e) return;
-    onChange({ type: "delete", data: { id: e.id } });
+    await onChange({ type: "delete", data: { id: e.id } });
     setShowAlert(false);
     onClose?.();
   };

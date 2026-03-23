@@ -1,4 +1,4 @@
-import type { EventType } from "../types/event";
+import type { EventType } from "../../types/event";
 import { DayEvent } from "./DayEvent";
 import { FaAngleLeft, FaAngleRight, FaPlus } from "react-icons/fa";
 
@@ -9,9 +9,9 @@ interface Props {
   addEventCurrentDay?: (info?: string) => void;
   eventDate: string;
   onSelectEvent: (event: EventType) => void;
-  deleteEvent?: () => void;
+  deleteEvent?: (data: any) => void;
   width: number;
-  onClick: (event: EventType) => void
+  onClick: (event: EventType) => void;
 }
 
 export const EventList = ({
@@ -23,11 +23,11 @@ export const EventList = ({
   addEventCurrentDay,
   deleteEvent,
   width,
-  onClick
+  onClick,
 }: Props) => {
   return (
     <div className="day-event-list-wrapper">
-      <div className="day-event-header" >
+      <div className="day-event-header">
         <div className="d-flex flex-row align-items-center">
           <h3>{eventDate}</h3>
           {width < 1200 && (
@@ -68,9 +68,8 @@ export const EventList = ({
             key={index}
             onSelect={() => onSelectEvent(event)}
             className="event-list-view"
-            deleteEvent={deleteEvent}
+            deleteEvent={() => deleteEvent && deleteEvent({ id: event.id })}
             showSelectedEvent={() => onClick(event)}
-            
           />
         ))}
         {events?.length === 0 && (

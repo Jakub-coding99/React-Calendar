@@ -1,9 +1,9 @@
 import { FaEdit } from "react-icons/fa";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import type { EventType } from "../types/event";
-import { formatToPrettyDate } from "../utils/date";
-import { Alert } from "../components/Alert";
-import { useDeleteEvent } from "../utils/eventActions";
+import type { EventType } from "../../types/event";
+import { formatToPrettyDate } from "../../utils/date";
+import { Alert } from "../Alert";
+import { useDeleteEvent } from "../../utils/eventActions";
 import { MdNotes } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
 import { TbClockHour4 } from "react-icons/tb";

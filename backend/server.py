@@ -1,7 +1,7 @@
 from fastapi import FastAPI,APIRouter,Response
 
 from pydantic import BaseModel,field_validator
-from database import create_db,select,Session,engine,Reservation
+from database import create_db,select,Session,engine,Reservation,Clients
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from datetime import datetime as dt
@@ -22,17 +22,19 @@ def check(cls,v):
 
 class ReservationModel(BaseModel):
     event: str
-    phone: str  | None
+    # phone: str  | None
     start: str
     end: str
     location:str | None
     color:str
     note: str  | None
     msg_enabled: bool
+    client_id: int
     # work_type: str | None
+
+
     
-    
-    @field_validator("phone","note")
+    @field_validator("note")
     @classmethod
     def check(cls,v):
         if v == "":
@@ -42,7 +44,12 @@ class ReservationModel(BaseModel):
 
     class Config:
         from_attributes = True  
-
+class ClientsModel(BaseModel):
+    id : str
+    name : str
+    phone: str | None
+    email: str | None
+    
 
 @router.get("/load-events")
 def load_events():
@@ -60,7 +67,7 @@ def create_event(r:ReservationModel):
             raise HTTPException(400, "Invalid time range")
         try:
             db = Reservation(event = r.event,
-                            phone = r.phone,
+                            # phone = r.phone,
                             start = start_date,
                             end = end_date,
                             note = r.note,
@@ -68,8 +75,8 @@ def create_event(r:ReservationModel):
                             msg_enabled = r.msg_enabled,
                             state = "reserved",
                             color = r.color,
-                            location = r.location
-
+                            location = r.location,
+                            client_id = r.client_id
                             )
             session.add(db)
             session.commit()
@@ -106,3 +113,17 @@ def delete_event(id:int):
         session.commit()
     return Response(status_code=204)
 
+
+@router.get("/get-clients")
+def get_clients():
+    with Session(engine) as session:
+        db = session.scalars(select(Clients)).all()
+        return db
+
+@router.get("/get-client/{id}")
+def get_single_client(id:int):
+    with Session(engine) as session:
+        client = session.get(Clients,id)
+        if not client:
+            raise HTTPException(status_code=404, detail="Client with this ID does not exist")
+    return client

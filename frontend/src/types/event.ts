@@ -1,4 +1,6 @@
 export interface EventType {
+  // clientName: string;
+  client_id?: number;
   event: string;
   start: string;
   end: string;
@@ -7,7 +9,7 @@ export interface EventType {
   note?: string;
   location?: string;
   msg_enabled?: boolean;
-  phone?: string;
+  client?: ClientType;
 }
 
 export enum View {
@@ -16,13 +18,23 @@ export enum View {
   day = "day",
 }
 
+export type ModalActions = "add" | "edit" | "show" | "clientEditSwitch";
+
 export interface ModalState {
   event?: EventType;
-  action: "add" | "edit" | "show";
+  action: ModalActions;
   fillData?: string;
+  client?: ClientType;
 }
 
 export interface listEventsType {
   date: string;
   events: EventType[];
+}
+
+export interface ClientType {
+  id: number;
+  name: string;
+  phone?: string;
+  email?: string;
 }

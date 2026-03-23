@@ -891,7 +891,8 @@ body {
   font-weight: 500;
   color: var(--text-primary);
 }
-.modal-content {
+.modal-content,
+.clients-modal {
   overflow-y: auto;
   max-height: 450px;
   min-height: 200px;
