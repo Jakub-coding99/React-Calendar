@@ -9,8 +9,9 @@ interface Props {
   onClose: () => void;
   type: ModalActions;
   fillDate?: string;
-  client: ClientType;
-  handleClient: (client?: ClientType) => void;
+  client?: ClientType;
+  handleClient: (client?: ClientType, recovery?: EventType) => void;
+  recoveryData?: EventType;
 }
 
 export const EventForm = ({
@@ -47,7 +48,7 @@ export const EventForm = ({
     const newClient = e.client ?? client;
 
     setCurrentClient(newClient);
-    setClientName(newClient.name);
+    setClientName(newClient?.name ?? "");
     // setClientPhone(newClient.phone ?? "");
 
     setEventDescription(e.event ?? "");
@@ -57,6 +58,7 @@ export const EventForm = ({
     setTo(e.end?.slice(11, 16) ?? "10:00");
     setNote(e.note ?? "");
     setLocation(e.location ?? "");
+    setEventColor(e.color ?? "");
     setIsChecked(e.msg_enabled ?? true);
   }, [e, fillDate]);
 
@@ -113,6 +115,20 @@ export const EventForm = ({
     "#FFD54F",
     "#90A4AE",
   ];
+  const getRecovery = () => {
+    let data = {
+      id: e?.id,
+      event: eventDescription,
+      start: `${date}T${from}`,
+      end: `${endDate}T${to}`,
+      color: eventColor || e.color || "",
+      note: note,
+      location: location,
+      msg_enabled: isChecked,
+      client_id: currentClient?.id,
+    };
+    return data;
+  };
 
   const checkDateDiff = useMemo(() => {
     const t1 = new Date(`${date}T${from}`);
@@ -130,7 +146,7 @@ export const EventForm = ({
       <form id="event-form" onSubmit={submitEvent}>
         <div className="row mb-2">
           <div className="col-12">
-            <span onClick={() => handleClient(currentClient)}>
+            <span onClick={() => handleClient(currentClient, getRecovery())}>
               {clientName}
             </span>
           </div>

@@ -15,10 +15,15 @@ import { Modal } from "../Modal";
 import type { EventType, ClientType } from "../../types/event";
 import { CalendarHeader } from "./CalendarHeader";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 
 import { fetchEvents, fetchClients } from "../../api/reservations";
 
+//fetchnout eventy po kazdem updatu db!!!
+
 export const Calendar = () => {
+  const effectRan = useRef(false);
+
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["events"],
     queryFn: fetchEvents,
@@ -185,6 +190,33 @@ export const Calendar = () => {
 
   const days = ["PO", "ÚT", "ST", "ČT", "PÁ", "SO", "NE"];
 
+  useEffect(() => {
+    if (effectRan.current) return;
+    effectRan.current = true;
+
+    const isLocalData = localStorage.getItem("recovery");
+    const isSessionData = sessionStorage.getItem("recovery");
+
+    if (isSessionData) {
+      console.log("session bezi");
+      const parsed = JSON.parse(isSessionData);
+
+      console.log(parsed.recovery);
+      openAddModal();
+      sessionStorage.removeItem("recovery");
+      localStorage.removeItem("recovery");
+      return;
+    } else if (isLocalData) {
+      console.log("local bezi");
+      const conf = confirm("Chcete načíst poslední data?");
+      if (conf) {
+        openAddModal();
+      }
+      localStorage.removeItem("recovery");
+      return;
+    }
+  }, []);
+
   const renderView = () => {
     switch (view) {
       case View.list:
@@ -218,6 +250,7 @@ export const Calendar = () => {
   };
 
   const renderedView = renderView();
+  // let clientsData = [{ name: "Jakub", id: 1, phone: "123456789" }];
 
   return (
     <>

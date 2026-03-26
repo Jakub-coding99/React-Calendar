@@ -26,6 +26,7 @@ export const Modal = ({
   clients,
 }: Props) => {
   const [client, setClient] = useState<ClientType>();
+  const [userAction] = useState(type);
 
   let isEdit = type == "edit";
   let isAdd = type == "add";
@@ -44,24 +45,30 @@ export const Modal = ({
     else if (isAdd) return "Nová událost";
     return undefined;
   };
+  let [recovery, setRecovery] = useState<EventType | null>();
 
   //choosing client from list of clients
   const handleClientClick = (client: ClientType) => {
     setClient(client);
   };
 
-  const editCurrentClient = (clientToEdit: ClientType) => {
-    if (!clientToEdit) return;
-
-    setClient(clientToEdit);
+  const editCurrentClient = (client?: ClientType, recovery?: EventType) => {
+    if (!client) return;
+    setRecovery(recovery);
+    setClient(client);
     onChange({
       type: "clientEditSwitch",
       data: {
-        client_id: clientToEdit.id,
+        client_id: client.id,
       },
     });
   };
-
+  const returnPreviousData = () => {
+    onChange({
+      type: "returnPreviousData",
+      data: recovery,
+    });
+  };
   return (
     <>
       <div id="modal">
@@ -89,7 +96,14 @@ export const Modal = ({
           />
         )}
 
-        {clientEdit && <ClientEdit client={client} />}
+        {clientEdit && (
+          <ClientEdit
+            client={client}
+            goToPrevious={returnPreviousData}
+            type={userAction}
+            recovery={recovery}
+          />
+        )}
 
         {showAlert && (
           <Alert

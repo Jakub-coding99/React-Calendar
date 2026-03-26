@@ -7,6 +7,7 @@ import {
   createEvent,
   deleteEvent,
   editEvent,
+  fetchEvents,
   getClient,
 } from "../api/reservations";
 
@@ -213,16 +214,30 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     }
     //pridani klienta do dat
     if (data?.type == "switchToEdit") {
+      console.log("j");
+      // const client = { name: "jakub", id: 1, email: "jjjj" };
       const client = await getClient(Number(data?.data.client_id));
       const editableD = { ...data.data, client: client };
 
       setModalState((prev) => ({ ...prev, event: editableD, action: "edit" }));
     }
     if (data?.type == "clientEditSwitch") {
+      const client = await getClient(Number(data?.data.client_id));
+      console.log("m");
       setModalState((prev) => ({
         ...prev,
         action: "clientEditSwitch",
+        client: client,
       }));
+    }
+
+    if (data?.type == "returnPreviousData") {
+      setModalState((prev) => ({
+        ...prev,
+        action: "edit",
+        event: data?.data,
+      }));
+      console.log("zmeneno");
     }
   };
   const hideInput = () => {

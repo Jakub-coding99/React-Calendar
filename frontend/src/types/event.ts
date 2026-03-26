@@ -4,8 +4,8 @@ export interface EventType {
   event: string;
   start: string;
   end: string;
-  id: string;
-  color: string;
+  id?: string;
+  color?: string;
   note?: string;
   location?: string;
   msg_enabled?: boolean;
@@ -37,4 +37,5 @@ export interface ClientType {
   name: string;
   phone?: string;
   email?: string;
+  note?: string;
 }
