@@ -46,11 +46,12 @@ export const createEvent = async (data: EventType) => {
       body: JSON.stringify(data),
     });
     const json = await res.json();
+    console.log(json);
     if (!res.ok)
       throw new Error(
         json?.message || `Chyba vytváření události: ${res.status}`,
       );
-    return { status: json, ok: res.ok };
+    return { status: json, ok: res.ok, data: json.data };
   } catch (error) {
     console.error(error);
     throw error;

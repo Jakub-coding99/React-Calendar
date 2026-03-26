@@ -185,7 +185,6 @@ export const useCalendar = (initialsEvents: EventType[]) => {
     }
     ///FIX SENDING UNDEFINED ID
     if (data?.type === "delete") {
-      console.log("delete");
       const id = data?.data?.id;
       console.log(id);
       if (id == null) return;
@@ -203,18 +202,17 @@ export const useCalendar = (initialsEvents: EventType[]) => {
 
     if (data?.type === "add") {
       const newEvent = data?.data;
-      console.log(newEvent);
       const ev = await createEvent(newEvent);
       const ok = ev.ok;
+
       if (ok) {
-        const newEvents = [...event, newEvent];
+        const newEvents = [...event, ev.data];
         setEvent(newEvents);
         setEventList(filterEV(year, month, day, newEvents));
       }
     }
     //pridani klienta do dat
     if (data?.type == "switchToEdit") {
-      console.log("j");
       // const client = { name: "jakub", id: 1, email: "jjjj" };
       const client = await getClient(Number(data?.data.client_id));
       const editableD = { ...data.data, client: client };

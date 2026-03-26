@@ -9,7 +9,7 @@ interface Props {
   addEventCurrentDay?: (info?: string) => void;
   eventDate: string;
   onSelectEvent: (event: EventType) => void;
-  deleteEvent?: (data: any) => void;
+  deleteEvent: (data: any) => void;
   width: number;
   onClick: (event: EventType) => void;
 }
@@ -68,7 +68,9 @@ export const EventList = ({
             key={index}
             onSelect={() => onSelectEvent(event)}
             className="event-list-view"
-            deleteEvent={() => deleteEvent && deleteEvent({ id: event.id })}
+            deleteEvent={() =>
+              deleteEvent({ type: "delete", data: { id: event.id } })
+            }
             showSelectedEvent={() => onClick(event)}
           />
         ))}

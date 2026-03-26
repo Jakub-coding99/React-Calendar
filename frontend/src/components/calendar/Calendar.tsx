@@ -12,7 +12,7 @@ import { listViewEvents } from "../../utils/events";
 import { View } from "../../types/event";
 import { useCalendar } from "../../hooks/useCalendar";
 import { Modal } from "../Modal";
-import type { EventType, ClientType } from "../../types/event";
+import type { EventType } from "../../types/event";
 import { CalendarHeader } from "./CalendarHeader";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";

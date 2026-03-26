@@ -5,7 +5,10 @@ from database import create_db,select,Session,engine,Reservation,Clients
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from datetime import datetime as dt
+from fastapi.encoders import jsonable_encoder
+
 router = APIRouter()
+
 
 # source venv/bin/activate
 
@@ -80,13 +83,20 @@ def create_event(r:ReservationModel):
                             )
             session.add(db)
             session.commit()
+            
+            if db.id:
+                return_event = session.get(Reservation,db.id)
+            
+            
+            
+            
   
         except Exception:
             
             session.rollback()
             raise
             
-    return JSONResponse(content={"message":"Event successfuly created"},status_code=201)
+    return JSONResponse(content={"message":"Event successfuly created","data":jsonable_encoder(return_event)},status_code=201)
     
 ##pridat vsechny moznosti
 @router.patch("/update-event/{id}")
