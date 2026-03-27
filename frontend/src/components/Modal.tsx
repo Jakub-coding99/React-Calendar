@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./Button";
 import type { EventType, ClientType, ModalActions } from "../types/event";
 import { Alert } from "./Alert";
@@ -15,6 +15,8 @@ interface Props {
   type: ModalActions;
   fillDate?: string;
   clients: ClientType[];
+  eventBackup?: boolean;
+  clientBackup?: ClientType;
 }
 
 export const Modal = ({
@@ -24,6 +26,8 @@ export const Modal = ({
   type,
   fillDate,
   clients,
+  eventBackup,
+  clientBackup,
 }: Props) => {
   const [client, setClient] = useState<ClientType>();
   const [userAction] = useState(type);
@@ -32,6 +36,12 @@ export const Modal = ({
   let isAdd = type == "add";
   let isShow = type == "show";
   let clientEdit = type == "clientEditSwitch";
+
+  useEffect(() => {
+    if (eventBackup) {
+      setClient(clientBackup);
+    }
+  }, [eventBackup]);
 
   const { showAlert, handleDelete, triggerDelete, setShowAlert } =
     useDeleteEvent({
@@ -69,6 +79,7 @@ export const Modal = ({
       data: recovery,
     });
   };
+
   return (
     <>
       <div id="modal">

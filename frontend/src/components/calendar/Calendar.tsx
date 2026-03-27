@@ -12,12 +12,12 @@ import { listViewEvents } from "../../utils/events";
 import { View } from "../../types/event";
 import { useCalendar } from "../../hooks/useCalendar";
 import { Modal } from "../Modal";
-import type { EventType } from "../../types/event";
+import type { ClientType, EventType } from "../../types/event";
 import { CalendarHeader } from "./CalendarHeader";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { fetchEvents, fetchClients } from "../../api/reservations";
+import { fetchEvents, fetchClients, getClient } from "../../api/reservations";
 
 //fetchnout eventy po kazdem updatu db!!!
 
@@ -198,11 +198,32 @@ export const Calendar = () => {
     const isSessionData = sessionStorage.getItem("recovery");
 
     if (isSessionData) {
-      console.log("session bezi");
       const parsed = JSON.parse(isSessionData);
+      const parsed_event = JSON.parse(parsed.recovery);
+      const loadClientAndSetData = async () => {
+        let recoveryEvent = {
+          id: parsed_event.id,
+          event: parsed_event.event,
+          start: `${parsed_event.start}:00`,
+          end: `${parsed_event.end}:00`,
+          color: parsed_event.color,
+          note: parsed_event.note,
+          location: parsed_event.location,
+          msg_enabled: parsed_event.msg_enabled,
+          client_id: parsed_event.client_id,
+          client: await getClient(Number(parsed_event.client_id)),
+        };
 
-      console.log(parsed.recovery);
-      openAddModal();
+        setModalState((prev) => ({
+          ...prev,
+          action: "add",
+          event: recoveryEvent,
+          clientBackup: recoveryEvent.client,
+          eventBackup: true,
+        }));
+      };
+
+      loadClientAndSetData();
       sessionStorage.removeItem("recovery");
       localStorage.removeItem("recovery");
       return;
@@ -320,6 +341,8 @@ export const Calendar = () => {
               type={modalState.action}
               fillDate={modalState.fillData}
               clients={clientsData}
+              eventBackup={modalState.eventBackup}
+              clientBackup={modalState.clientBackup}
             />
           </div>
         </div>

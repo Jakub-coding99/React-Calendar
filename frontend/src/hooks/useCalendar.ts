@@ -7,7 +7,6 @@ import {
   createEvent,
   deleteEvent,
   editEvent,
-  fetchEvents,
   getClient,
 } from "../api/reservations";
 
@@ -167,6 +166,7 @@ export const useCalendar = (initialsEvents: EventType[]) => {
   };
 
   const handleChange = async (data?: any) => {
+    console.log(data);
     if (data?.type === "edit") {
       const editableEvent = data?.data;
       if (!editableEvent) return;

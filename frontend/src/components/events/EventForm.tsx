@@ -26,7 +26,6 @@ export const EventForm = ({
   const [currentClient, setCurrentClient] = useState<ClientType | undefined>(
     client,
   );
-  // const [clientPhone, setClientPhone] = useState(currentClient?.phone ?? "");
   const [clientName, setClientName] = useState(currentClient?.name ?? "");
 
   const [eventDescription, setEventDescription] = useState("");
@@ -127,6 +126,8 @@ export const EventForm = ({
       msg_enabled: isChecked,
       client_id: currentClient?.id,
     };
+    console.log("recovery-data");
+    console.log(data);
     return data;
   };
 

@@ -25,6 +25,8 @@ export interface ModalState {
   action: ModalActions;
   fillData?: string;
   client?: ClientType;
+  eventBackup?: boolean;
+  clientBackup?: ClientType;
 }
 
 export interface listEventsType {
