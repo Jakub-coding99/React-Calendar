@@ -1,17 +1,16 @@
 import { ClientSearch } from "./ClientSearch";
 import { Tr } from "./Tr";
 
-export const Clients = () => {
-  let clientsData = [
-    {
-      name: "Jakub",
-      id: 1,
-      phone: "123456789",
-      email: "test@test.cz",
-      note: "test",
-    },
-    { name: "Markéta", id: 2, phone: "987654321", email: "test@test" },
-  ];
+import type { ClientType } from "../../types/event";
+
+import { useClients } from "../../hooks/useClients";
+
+interface Props {
+  allClients: ClientType[];
+}
+
+export const Clients = ({ allClients }: Props) => {
+  const { clients } = useClients(allClients ?? []);
 
   const headerItems = ["Jméno", "Email", "Telefon", "Poznámka", "Akce"];
 
@@ -33,8 +32,8 @@ export const Clients = () => {
                 <Tr headerData={headerItems} state="header" />
               </thead>
               <tbody>
-                {clientsData.map((client) => (
-                  <Tr rowData={client} state="content" />
+                {clients?.map((client, key) => (
+                  <Tr key={key} rowData={client} state="content" />
                 ))}
               </tbody>
             </table>

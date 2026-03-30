@@ -8,8 +8,6 @@ interface Props {
 export const ClientSearch = ({ clients }: Props) => {
   let [result, setResult] = useState("");
 
-  console.log(result);
-
   const findClient = (res: string) => {
     setResult(res);
     // useEffect(() => {

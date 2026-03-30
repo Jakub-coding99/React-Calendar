@@ -14,25 +14,17 @@ import { useCalendar } from "../../hooks/useCalendar";
 import { Modal } from "../Modal";
 import type { ClientType, EventType } from "../../types/event";
 import { CalendarHeader } from "./CalendarHeader";
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 
 import { fetchEvents, fetchClients, getClient } from "../../api/reservations";
 
-//fetchnout eventy po kazdem updatu db!!!
+interface Props {
+  allClients: ClientType[];
+  allEvents: EventType[];
+}
 
-export const Calendar = () => {
+export const Calendar = ({ allClients, allEvents }: Props) => {
   const effectRan = useRef(false);
-
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ["events"],
-    queryFn: fetchEvents,
-  });
-
-  const { data: clientsData } = useQuery({
-    queryKey: ["clients"],
-    queryFn: fetchClients,
-  });
 
   const currentDate = new Date();
   const Today = formatDate(currentDate);
@@ -60,7 +52,7 @@ export const Calendar = () => {
     animate,
     width,
     addEventCurrentDay,
-  } = useCalendar(data ?? []);
+  } = useCalendar(allEvents ?? []);
 
   const openAddModal = (fillData?: string) => {
     setModalState((prev) => ({ ...prev, action: "add", fillData }));
@@ -190,52 +182,61 @@ export const Calendar = () => {
 
   const days = ["PO", "ÚT", "ST", "ČT", "PÁ", "SO", "NE"];
 
+  const loadClientAndSetData = async (storageData: string) => {
+    const parsed = JSON.parse(storageData);
+    const parsed_event = JSON.parse(parsed.recovery);
+
+    let recoveryEvent = {
+      id: parsed_event.id,
+      event: parsed_event.event,
+      start: `${parsed_event.start}:00`,
+      end: `${parsed_event.end}:00`,
+      color: parsed_event.color,
+      note: parsed_event.note,
+      location: parsed_event.location,
+      msg_enabled: parsed_event.msg_enabled,
+      client_id: parsed_event.client_id,
+      client: await getClient(Number(parsed_event.client_id)),
+      eventAction: parsed.type,
+    };
+    return recoveryEvent;
+  };
+
   useEffect(() => {
     if (effectRan.current) return;
     effectRan.current = true;
 
-    const isLocalData = localStorage.getItem("recovery");
-    const isSessionData = sessionStorage.getItem("recovery");
+    const init = async () => {
+      const isLocalData = localStorage.getItem("recovery");
+      const isSessionData = sessionStorage.getItem("recovery");
 
-    if (isSessionData) {
-      const parsed = JSON.parse(isSessionData);
-      const parsed_event = JSON.parse(parsed.recovery);
-      const loadClientAndSetData = async () => {
-        let recoveryEvent = {
-          id: parsed_event.id,
-          event: parsed_event.event,
-          start: `${parsed_event.start}:00`,
-          end: `${parsed_event.end}:00`,
-          color: parsed_event.color,
-          note: parsed_event.note,
-          location: parsed_event.location,
-          msg_enabled: parsed_event.msg_enabled,
-          client_id: parsed_event.client_id,
-          client: await getClient(Number(parsed_event.client_id)),
-        };
-
+      if (isSessionData) {
+        const recoveryEvent = await loadClientAndSetData(isSessionData);
         setModalState((prev) => ({
           ...prev,
-          action: "add",
+          action: recoveryEvent.eventAction,
           event: recoveryEvent,
           clientBackup: recoveryEvent.client,
           eventBackup: true,
         }));
-      };
+      } else if (isLocalData) {
+        const conf = confirm("Chcete načíst poslední data?");
 
-      loadClientAndSetData();
+        if (conf) {
+          const recoveryEvent = await loadClientAndSetData(isLocalData);
+          setModalState((prev) => ({
+            ...prev,
+            action: recoveryEvent.eventAction,
+            event: recoveryEvent,
+            clientBackup: recoveryEvent.client,
+            eventBackup: true,
+          }));
+        }
+      }
       sessionStorage.removeItem("recovery");
       localStorage.removeItem("recovery");
-      return;
-    } else if (isLocalData) {
-      console.log("local bezi");
-      const conf = confirm("Chcete načíst poslední data?");
-      if (conf) {
-        openAddModal();
-      }
-      localStorage.removeItem("recovery");
-      return;
-    }
+    };
+    init();
   }, []);
 
   const renderView = () => {
@@ -340,7 +341,7 @@ export const Calendar = () => {
               onClose={() => setModalState(null)}
               type={modalState.action}
               fillDate={modalState.fillData}
-              clients={clientsData}
+              clients={allClients}
               eventBackup={modalState.eventBackup}
               clientBackup={modalState.clientBackup}
             />

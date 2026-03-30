@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "./Button";
 import type { EventType, ClientType, ModalActions } from "../types/event";
 import { Alert } from "./Alert";
@@ -30,7 +30,11 @@ export const Modal = ({
   clientBackup,
 }: Props) => {
   const [client, setClient] = useState<ClientType>();
-  const [userAction] = useState(type);
+
+  const userAction = useRef("");
+  if (type == "add" || type == "edit") {
+    userAction.current = type;
+  }
 
   let isEdit = type == "edit";
   let isAdd = type == "add";
@@ -111,7 +115,7 @@ export const Modal = ({
           <ClientEdit
             client={client}
             goToPrevious={returnPreviousData}
-            type={userAction}
+            type={userAction.current}
             recovery={recovery}
           />
         )}

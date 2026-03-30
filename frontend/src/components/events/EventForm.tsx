@@ -33,7 +33,7 @@ export const EventForm = ({
   const [from, setFrom] = useState(e?.start.slice(11, 16) ?? "09:00");
   const [to, setTo] = useState(e?.end.slice(11, 16) ?? "10:00");
   const [endDate, setEndDate] = useState(e?.end.slice(0, 10) ?? fillDate ?? "");
-  const [eventColor, setEventColor] = useState("");
+  const [eventColor, setEventColor] = useState("#90A4AE");
   const [showErrorMsg, setShowErrorMsg] = useState(false);
   const [note, setNote] = useState("");
   const [location, setLocation] = useState("");
@@ -44,6 +44,7 @@ export const EventForm = ({
 
   useEffect(() => {
     if (!e) return;
+
     const newClient = e.client ?? client;
 
     setCurrentClient(newClient);
@@ -93,7 +94,7 @@ export const EventForm = ({
           event: eventDescription,
           start: `${date}T${from}`,
           end: `${endDate}T${to}`,
-          color: colors.includes(eventColor) ? eventColor : "#6594B1",
+          color: eventColor,
           note: note,
           location: location,
           msg_enabled: isChecked,
@@ -105,6 +106,7 @@ export const EventForm = ({
   };
 
   const colors: string[] = [
+    "#90A4AE",
     "#EF5350",
     "#42A5F5",
     "#66BB6A",
@@ -112,7 +114,6 @@ export const EventForm = ({
     "#AB47BC",
     "#26C6DA",
     "#FFD54F",
-    "#90A4AE",
   ];
   const getRecovery = () => {
     let data = {

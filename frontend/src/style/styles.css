@@ -50,6 +50,14 @@ body {
   height: 100%;
   background-color: black;
 }
+/* =========================
+ Header
+========================= */
+
+nav ul li {
+  text-decoration: none;
+  list-style: none;
+}
 
 /* =========================
    Layout: Page & Wrapper

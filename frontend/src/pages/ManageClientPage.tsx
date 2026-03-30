@@ -4,7 +4,11 @@ import { getClient } from "../api/reservations";
 import { useEffect, useState } from "react";
 import type { ClientType } from "../types/event";
 
-export const ManageClientPage = () => {
+interface Props {
+  allClients: ClientType[];
+}
+
+export const ManageClientPage = ({ allClients }: Props) => {
   const { id } = useParams();
   const [params] = useSearchParams();
 
@@ -25,5 +29,5 @@ export const ManageClientPage = () => {
     if (id) fetchClient();
   }, [id]);
 
-  return <ClientHandler type={type} client={client} />;
+  return <ClientHandler type={type} client={client} allClients={allClients} />;
 };

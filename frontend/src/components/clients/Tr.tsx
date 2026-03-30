@@ -9,7 +9,7 @@ interface Props {
   state: "header" | "content";
   headerData?: string[];
 }
-// {() => useNavigate("/manage-client")}
+
 export const Tr = ({ rowData, state, headerData }: Props) => {
   const navigate = useNavigate();
 
@@ -31,16 +31,18 @@ export const Tr = ({ rowData, state, headerData }: Props) => {
           <Td>{rowData?.email}</Td>
           <Td>{rowData?.phone}</Td>
           <Td>{rowData?.note}</Td>
-          <Button onClick={() => console.log(rowData?.id)}>
-            <HiDotsVertical />
-          </Button>
+          <Td>
+            <Button onClick={() => console.log(rowData?.id)}>
+              <HiDotsVertical />
+            </Button>
+          </Td>
         </tr>
       )}
 
       {state == "header" && (
         <tr>
-          {headerData?.map((item) => (
-            <th>{item}</th>
+          {headerData?.map((item, key) => (
+            <th key={key}>{item}</th>
           ))}
         </tr>
       )}
