@@ -24,6 +24,7 @@ export const ClientSearch = ({ clients }: Props) => {
     <input
       type="search"
       placeholder="hledat"
+      className="client-search-input"
       onChange={(e) => findClient(e.target.value)}
     />
   );

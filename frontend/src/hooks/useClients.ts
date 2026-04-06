@@ -11,8 +11,14 @@ export const useClients = (cl: ClientType[]) => {
     console.log("klik v req");
   };
 
+  const handleClientAction = () => {
+    console.log("tesuse");
+    return;
+  };
+
   return {
     clients,
     handleClientRequests,
+    handleClientAction,
   };
 };

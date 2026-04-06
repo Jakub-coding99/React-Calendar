@@ -39,11 +39,6 @@ export const ClientEdit = ({ client, goToPrevious, recovery, type }: Props) => {
   return (
     <div className="clients-modal">
       <div className="row">
-        {/* TADY POSLAT DATA */}
-        {/* <button onClick = {() => navigate({
-          pathname: `/manage-client/${client.id}`,
-          search: "?type=show" }
-          )}>klik</button> */}
         <button onClick={() => handleRedirectData()}>klik</button>
 
         <button onClick={() => goToPrevious()}>back</button>

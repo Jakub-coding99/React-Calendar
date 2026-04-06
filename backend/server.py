@@ -102,15 +102,31 @@ def create_event(r:ReservationModel):
 @router.patch("/update-event/{id}")
 def edit_event(id:int,event:ReservationModel):
     with Session(engine) as session:
-        db = session.get(Reservation,id)
+        db = session.get(Reservation, id)
         if not db:
             raise HTTPException(status_code=404, detail="Event with this ID does not exist")
-        
-        if len(event.event) > 0:
+
+        # Aktualizace všech relevantních polí
+        if event.event is not None and len(event.event) > 0:
             db.event = event.event
+        if event.start is not None and len(event.start) > 0:
+            db.start = dt.fromisoformat(event.start)
+        if event.end is not None and len(event.end) > 0:
+            db.end = dt.fromisoformat(event.end)
+        if event.location is not None:
+            db.location = event.location
+        if event.color is not None:
+            db.color = event.color
+        if event.note is not None:
+            db.note = event.note
+        if event.msg_enabled is not None:
+            db.msg_enabled = event.msg_enabled
+        if event.client_id is not None:
+            db.client_id = event.client_id
+
         session.commit()
 
-    return JSONResponse(content={"message":"Event successfuly edited"},status_code=200)
+    return JSONResponse(content={"message": "Event successfuly edited"}, status_code=200)
 
 
 @router.delete("/delete-event/{id}")

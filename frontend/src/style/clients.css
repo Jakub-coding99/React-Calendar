@@ -1,0 +1,94 @@
+/* clients dropdown */
+
+.dropdown-wrapper-clients-action,
+.dropdown-wrapper-clients-header {
+  border: 1px solid black;
+  z-index: 1000;
+  background: white;
+  padding: 5px 10px;
+}
+
+.dropdown-wrapper-clients-action {
+  right: 20px;
+  top: 10px;
+}
+.dropdown-wrapper-clients-header {
+  top: 30px;
+  width: 100%;
+}
+
+/* clients table */
+
+.content-header table {
+  height: 50vh;
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.content-header th,
+.content-header td {
+  border: 1px solid #e0e0e0;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.content-header th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+
+.content-header tr:nth-child(even) td {
+  background: #fafafa;
+}
+
+.clients-header {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.clients-header > * {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.clients-header h1 {
+  flex: 2 1 0;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.clients-header span {
+  text-align: center;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 0;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.clients-header span:hover {
+  background: #f0f0f0;
+}
+
+.clients-wrapper > .client-search-input {
+  width: 100%;
+  max-width: 350px;
+  margin-bottom: 16px;
+  padding: 8px 14px;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+  transition: border 0.2s;
+}
+.clients-wrapper > .client-search-input:focus {
+  border: 1.5px solid #1976d2;
+}
