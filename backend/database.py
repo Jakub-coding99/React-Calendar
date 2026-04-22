@@ -1,5 +1,5 @@
-from sqlalchemy import create_engine,MetaData,select,engine,Integer,String,Boolean,DateTime
-from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,Session,session
+from sqlalchemy import create_engine,String,Boolean,DateTime
+from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,Session,sessionmaker
 from datetime import datetime as dt
 
 class Base(DeclarativeBase):
@@ -111,9 +111,20 @@ def fake_clients():
 sqlite_file_name = "reserv_database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 engine = create_engine(sqlite_url, echo=True)
+SessionLocal = sessionmaker(autoflush=False,autocommit = False, bind=engine)
+
+def get_db():
+    database = SessionLocal()
+    try:
+        yield database
+    finally:
+        database.close()
+
+
 
 def create_db():
     
     Base.metadata.create_all(engine)
     # populate_db()
     # fake_clients()
+

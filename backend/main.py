@@ -3,11 +3,20 @@ from fastapi import FastAPI
 from server import router
 from database import create_db
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
 
 #TEST
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app:FastAPI):
+    create_db()
+    yield
+    
+    
+
+app = FastAPI(lifespan=lifespan)
 origins = ["http://localhost:5173"]
 
 
@@ -22,5 +31,5 @@ app.add_middleware(
 
 
 
-create_db()
+
 app.include_router(router, prefix="/router") 

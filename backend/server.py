@@ -1,23 +1,21 @@
-from fastapi import FastAPI,APIRouter,Response
-
+from fastapi import APIRouter,Response,Depends
 from pydantic import BaseModel,field_validator
-from database import create_db,select,Session,engine,Reservation,Clients
+from database import Reservation,Clients,get_db
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from datetime import datetime as dt
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy.orm import Session
+from sqlalchemy import select
+
 
 router = APIRouter()
 
 
 # source venv/bin/activate
 
-
-
-create_db()
-
 @field_validator("phone","work_type","note")
-def check(cls,v):
+def check(v):
     if v == "":
         return None
     return v
@@ -25,7 +23,6 @@ def check(cls,v):
 
 class ReservationModel(BaseModel):
     event: str
-    # phone: str  | None
     start: str
     end: str
     location:str | None
@@ -33,8 +30,7 @@ class ReservationModel(BaseModel):
     note: str  | None
     msg_enabled: bool
     client_id: int
-    # work_type: str | None
-
+   
 
     
     @field_validator("note")
@@ -55,101 +51,91 @@ class ClientsModel(BaseModel):
     
 
 @router.get("/load-events")
-def load_events():
-    with Session(engine) as session:
-        db = session.scalars(select(Reservation)).all()
-        print(db)
-        return db
+def load_events(db: Session = Depends(get_db)):
+    database = db.scalars(select(Reservation)).all()
+    return database
    
 @router.post("/create-event")
-def create_event(r:ReservationModel):
-    with Session(engine) as session:
-        start_date = dt.fromisoformat(r.start)
-        end_date = dt.fromisoformat(r.end)
-        if end_date <= start_date:
-            raise HTTPException(400, "Invalid time range")
-        try:
-            db = Reservation(event = r.event,
-                            # phone = r.phone,
-                            start = start_date,
-                            end = end_date,
-                            note = r.note,
-                            # work_type  = r.work_type,
-                            msg_enabled = r.msg_enabled,
-                            state = "reserved",
-                            color = r.color,
-                            location = r.location,
-                            client_id = r.client_id
-                            )
-            session.add(db)
-            session.commit()
-            
-            if db.id:
-                return_event = session.get(Reservation,db.id)
-            
-            
-            
-            
-  
-        except Exception:
-            
-            session.rollback()
-            raise
-            
-    return JSONResponse(content={"message":"Event successfuly created","data":jsonable_encoder(return_event)},status_code=201)
+def create_event(r:ReservationModel,db: Session = Depends(get_db)):
+   
+    start_date = dt.fromisoformat(r.start)
+    end_date = dt.fromisoformat(r.end)
+    if end_date <= start_date:
+        raise HTTPException(400, "Invalid time range")
+    try:
+        event_db = Reservation(
+            event = r.event,
+                        start = start_date,
+                        end = end_date,
+                        note = r.note,
+                        msg_enabled = r.msg_enabled,
+                        state = "reserved",
+                        color = r.color,
+                        location = r.location,
+                        client_id = r.client_id
+
+        )
+        db.add(event_db)
+        db.commit()
+        db.refresh(event_db)
+        
     
-##pridat vsechny moznosti
+    except Exception:
+        db.rollback()
+        raise
+        
+    return JSONResponse(content={"message":"Event successfuly created","data":jsonable_encoder(event_db)},status_code=201)
+
+
 @router.patch("/update-event/{id}")
-def edit_event(id:int,event:ReservationModel):
-    with Session(engine) as session:
-        db = session.get(Reservation, id)
-        if not db:
-            raise HTTPException(status_code=404, detail="Event with this ID does not exist")
+def edit_event(id:int,event:ReservationModel,db:Session = Depends(get_db)):
+    
+    event_update = db.get(Reservation, id)
+    if not event_update:
+        raise HTTPException(status_code=404, detail="Event with this ID does not exist")
+    
+    if event.event is not None and len(event.event) > 0:
+        event_update.event = event.event
+    if event.start is not None and len(event.start) > 0:
+        event_update.start = dt.fromisoformat(event.start)
+    if event.end is not None and len(event.end) > 0:
+        event_update.end = dt.fromisoformat(event.end)
+    if event.location is not None:
+        event_update.location = event.location
+    if event.color is not None:
+        event_update.color = event.color
+    if event.note is not None:
+        event_update.note = event.note
+    if event.msg_enabled is not None:
+        event_update.msg_enabled = event.msg_enabled
+    if event.client_id is not None:
+        event_update.client_id = event.client_id
 
-        # Aktualizace všech relevantních polí
-        if event.event is not None and len(event.event) > 0:
-            db.event = event.event
-        if event.start is not None and len(event.start) > 0:
-            db.start = dt.fromisoformat(event.start)
-        if event.end is not None and len(event.end) > 0:
-            db.end = dt.fromisoformat(event.end)
-        if event.location is not None:
-            db.location = event.location
-        if event.color is not None:
-            db.color = event.color
-        if event.note is not None:
-            db.note = event.note
-        if event.msg_enabled is not None:
-            db.msg_enabled = event.msg_enabled
-        if event.client_id is not None:
-            db.client_id = event.client_id
-
-        session.commit()
+    db.commit()
 
     return JSONResponse(content={"message": "Event successfuly edited"}, status_code=200)
 
 
 @router.delete("/delete-event/{id}")
-def delete_event(id:int):
-    with Session(engine) as session:
-        db = session.get(Reservation,id)
-        if not db:
-            raise HTTPException(status_code=404, detail="Event with this ID does not exist")
-        session.delete(db)
-        session.commit()
+def delete_event(id:int, db : Session = Depends(get_db)):
+    delete_event = db.get(Reservation,id)
+    if not delete_event:
+        raise HTTPException(status_code=404, detail="Event with this ID does not exist")
+    db.delete(delete_event)
+    db.commit()
     return Response(status_code=204)
 
 
 @router.get("/get-clients")
-def get_clients():
-    with Session(engine) as session:
-        db = session.scalars(select(Clients)).all()
-        return db
+def get_clients(db: Session = Depends(get_db)):
+    
+    clients = db.scalars(select(Clients)).all()
+    return clients
 
 @router.get("/get-client/{id}")
-def get_single_client(id:int):
-    with Session(engine) as session:
-        client = session.get(Clients,id)
-        if not client:
+def get_single_client(id:int, db:Session = Depends(get_db)):
+    
+    client = db.get(Clients,id)
+    if not client:
             raise HTTPException(status_code=404, detail="Client with this ID does not exist")
     return client
