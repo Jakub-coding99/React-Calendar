@@ -1,9 +1,9 @@
-import type { ClientType, EventType } from "../../types/event";
+import type { Client, EventType } from "../../types/event";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
-  client?: ClientType;
+  client?: Client;
   goToPrevious: () => void;
   recovery: EventType | null | undefined;
   type: string;

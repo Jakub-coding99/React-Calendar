@@ -3,7 +3,8 @@ import { ClientPage } from "./pages/ClientPage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ManageClientPage } from "./pages/ManageClientPage";
 import { PageHeader } from "./components/PageHeader";
-import { fetchClients, fetchEvents } from "./api/reservations";
+import { fetchEvents } from "./api/reservations";
+import { fetchClients } from "./api/clients";
 import { useQuery } from "@tanstack/react-query";
 
 function App() {
@@ -28,12 +29,9 @@ function App() {
             <CalendarPage allClients={clientsData} allEvents={allEvents} />
           }
         />
+        <Route path="/clients" element={<ClientPage />} />
         <Route
-          path="/clients"
-          element={<ClientPage allClients={clientsData} />}
-        />
-        <Route
-          path="/manage-client/:id"
+          path="/manage-client/:id?"
           element={<ManageClientPage allClients={clientsData} />}
         />
       </Routes>

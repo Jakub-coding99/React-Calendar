@@ -1,4 +1,4 @@
-import type { ClientType } from "../../types/event";
+import type { Client } from "../../types/event";
 import { Td } from "./Td";
 import { Button } from "../Button";
 import { HiDotsVertical } from "react-icons/hi";
@@ -7,7 +7,7 @@ import { Dropdown } from "../Dropdown";
 import { useState } from "react";
 
 interface Props {
-  rowData?: ClientType;
+  rowData?: Client;
   state: "header" | "content";
   headerData?: string[];
   handleClientAction?: () => void;

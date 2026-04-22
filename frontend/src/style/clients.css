@@ -92,3 +92,16 @@
 .clients-wrapper > .client-search-input:focus {
   border: 1.5px solid #1976d2;
 }
+
+.client-form {
+  width: min(100%, 600px);
+  border: 1px solid black;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+.client-form-content {
+  overflow-y: auto;
+  height: 400px;
+  overflow-x: hidden;
+}

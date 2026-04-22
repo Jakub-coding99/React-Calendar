@@ -1,23 +1,22 @@
 import { ClientSearch } from "./ClientSearch";
 import { Tr } from "./Tr";
 
-import type { ClientType } from "../../types/event";
+import type { Client } from "../../types/event";
 
 import { useClients } from "../../hooks/useClients";
 import { Dropdown } from "../Dropdown";
 import { useState } from "react";
 
-interface Props {
-  allClients: ClientType[];
-}
+import { useNavigate } from "react-router-dom";
 
-export const Clients = ({ allClients }: Props) => {
-  const { clients, handleClientAction } = useClients(allClients ?? []);
+export const Clients = () => {
+  const { clients, handleClientAction } = useClients();
   const [openDropdown, setOpenDropdown] = useState(false);
   const closeDropdown = () => {
     setOpenDropdown(false);
   };
   const headerItems = ["Jméno", "Email", "Telefon", "Poznámka", "Akce"];
+  const navigate = useNavigate();
 
   return (
     <>
@@ -41,7 +40,12 @@ export const Clients = ({ allClients }: Props) => {
           </span>
 
           <span className="m-1">export</span>
-          <span className="m-1">pridat</span>
+          <span
+            className="m-1"
+            onClick={() => navigate(`/manage-client?type=add`)}
+          >
+            pridat
+          </span>
         </div>
         <div className="clients-content">
           <div className="content-header">

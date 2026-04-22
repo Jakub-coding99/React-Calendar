@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Button } from "./Button";
-import type { EventType, ClientType, ModalActions } from "../types/event";
+import type { EventType, Client, ModalActions } from "../types/event";
 import { Alert } from "./Alert";
 import { useDeleteEvent } from "../utils/eventActions";
 import { ShowView } from "./events/ShowView";
@@ -14,9 +14,9 @@ interface Props {
   onClose: () => void;
   type: ModalActions;
   fillDate?: string;
-  clients: ClientType[];
+  clients: Client[];
   eventBackup?: boolean;
-  clientBackup?: ClientType;
+  clientBackup?: Client;
 }
 
 export const Modal = ({
@@ -29,7 +29,7 @@ export const Modal = ({
   eventBackup,
   clientBackup,
 }: Props) => {
-  const [client, setClient] = useState<ClientType>();
+  const [client, setClient] = useState<Client>();
 
   const userAction = useRef("");
   if (type == "add" || type == "edit") {
@@ -62,11 +62,11 @@ export const Modal = ({
   let [recovery, setRecovery] = useState<EventType | null>();
 
   //choosing client from list of clients
-  const handleClientClick = (client: ClientType) => {
+  const handleClientClick = (client: Client) => {
     setClient(client);
   };
 
-  const editCurrentClient = (client?: ClientType, recovery?: EventType) => {
+  const editCurrentClient = (client?: Client, recovery?: EventType) => {
     if (!client) return;
     setRecovery(recovery);
     setClient(client);

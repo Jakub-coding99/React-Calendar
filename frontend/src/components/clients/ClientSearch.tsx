@@ -1,8 +1,8 @@
 import { useState } from "react";
-import type { ClientType } from "../../types/event";
+import type { Client } from "../../types/event";
 
 interface Props {
-  clients?: ClientType;
+  clients?: Client;
 }
 
 export const ClientSearch = ({ clients }: Props) => {

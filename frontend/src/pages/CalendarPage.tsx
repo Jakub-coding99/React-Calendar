@@ -1,8 +1,8 @@
 import { Calendar } from "../components/calendar/Calendar";
-import type { ClientType, EventType } from "../types/event";
+import type { Client, EventType } from "../types/event";
 
 interface Props {
-  allClients: ClientType[];
+  allClients: Client[];
   allEvents: EventType[];
 }
 

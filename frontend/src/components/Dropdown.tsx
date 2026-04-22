@@ -1,9 +1,10 @@
 import { useRef, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import type { ClientAction } from "../types/event";
 
 interface Props {
   close: () => void;
-  handleClientAction?: () => void;
+  handleClientAction?: (data?: ClientAction) => void;
   type: "clientAction" | "clientsHeader";
   clientId?: number;
 }
@@ -28,7 +29,6 @@ export const Dropdown = ({
     document.addEventListener("mousedown", callback);
     return () => document.removeEventListener("mousedown", callback);
   }, [close]);
-  // handleClientAction?.();
 
   const editUser = () => {
     if (!clientId) return;
@@ -49,7 +49,21 @@ export const Dropdown = ({
             <div className="m-2" onClick={() => editUser()}>
               Upravit
             </div>
-            <p className="m-2">Smazat</p>
+            <p
+              className="m-2"
+              onClick={() => {
+                if (clientId !== undefined) {
+                  handleClientAction?.({
+                    type: "delete",
+                    data: {
+                      id: clientId,
+                    },
+                  });
+                }
+              }}
+            >
+              Smazat
+            </p>
           </div>
         </div>
       )}

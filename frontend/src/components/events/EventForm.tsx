@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import type { EventType, ClientType, ModalActions } from "../../types/event";
+import type { EventType, Client, ModalActions } from "../../types/event";
 import { MdNotes } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
 
@@ -9,8 +9,8 @@ interface Props {
   onClose: () => void;
   type: ModalActions;
   fillDate?: string;
-  client?: ClientType;
-  handleClient: (client?: ClientType, recovery?: EventType) => void;
+  client?: Client;
+  handleClient: (client?: Client, recovery?: EventType) => void;
   recoveryData?: EventType;
 }
 
@@ -23,7 +23,7 @@ export const EventForm = ({
   client,
   handleClient,
 }: Props) => {
-  const [currentClient, setCurrentClient] = useState<ClientType | undefined>(
+  const [currentClient, setCurrentClient] = useState<Client | undefined>(
     client,
   );
   const [clientName, setClientName] = useState(currentClient?.name ?? "");

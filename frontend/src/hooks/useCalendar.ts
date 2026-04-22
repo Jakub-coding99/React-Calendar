@@ -3,12 +3,8 @@ import type { EventType, ModalState } from "../types/event";
 import { View } from "../types/event";
 import { updateClickedDay } from "../utils/events";
 import { filterEV, defaultToday } from "../utils/events";
-import {
-  createEvent,
-  deleteEvent,
-  editEvent,
-  getClient,
-} from "../api/reservations";
+import { createEvent, deleteEvent, editEvent } from "../api/reservations";
+import { getClient } from "../api/clients";
 
 // EDIT EVENT FUNCTIONS
 export const useCalendar = (initialsEvents: EventType[]) => {

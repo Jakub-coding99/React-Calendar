@@ -12,14 +12,13 @@ import { listViewEvents } from "../../utils/events";
 import { View } from "../../types/event";
 import { useCalendar } from "../../hooks/useCalendar";
 import { Modal } from "../Modal";
-import type { ClientType, EventType } from "../../types/event";
+import type { Client, EventType } from "../../types/event";
 import { CalendarHeader } from "./CalendarHeader";
 import { useEffect, useRef, useState } from "react";
-
-import { fetchEvents, fetchClients, getClient } from "../../api/reservations";
+import { getClient } from "../../api/clients";
 
 interface Props {
-  allClients: ClientType[];
+  allClients: Client[];
   allEvents: EventType[];
 }
 

@@ -1,7 +1,7 @@
-import type { ClientType } from "../../types/event";
+import type { Client } from "../../types/event";
 
 interface Props {
-  client: ClientType;
+  client: Client;
 }
 
 export const ClientRow = ({ client }: Props) => {

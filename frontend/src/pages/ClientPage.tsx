@@ -1,14 +1,10 @@
 import { Clients } from "../components/clients/Clients";
-import type { ClientType } from "../types/event";
+import type { Client } from "../types/event";
 
-interface Props {
-  allClients: ClientType[];
-}
-
-export const ClientPage = ({ allClients }: Props) => {
+export const ClientPage = () => {
   return (
     <div className="clients-page">
-      <Clients allClients={allClients} />
+      <Clients />
     </div>
   );
 };

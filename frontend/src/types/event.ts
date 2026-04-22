@@ -9,7 +9,7 @@ export interface EventType {
   note?: string;
   location?: string;
   msg_enabled?: boolean;
-  client?: ClientType;
+  client?: Client;
 }
 
 export enum View {
@@ -24,9 +24,9 @@ export interface ModalState {
   event?: EventType;
   action: ModalActions;
   fillData?: string;
-  client?: ClientType;
+  client?: Client;
   eventBackup?: boolean;
-  clientBackup?: ClientType;
+  clientBackup?: Client;
 }
 
 export interface listEventsType {
@@ -34,10 +34,22 @@ export interface listEventsType {
   events: EventType[];
 }
 
-export interface ClientType {
+export interface Client {
   id: number;
   name: string;
   phone?: string;
   email?: string;
   note?: string;
 }
+
+export interface NewClient {
+  name: string;
+  phone?: string;
+  email?: string;
+  note?: string;
+}
+
+export type ClientAction =
+  | { type: "add"; data: NewClient }
+  | { type: "edit"; data: Client }
+  | { type: "delete"; data: { id: number } };

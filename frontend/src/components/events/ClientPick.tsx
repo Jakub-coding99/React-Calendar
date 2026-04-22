@@ -1,9 +1,9 @@
-import type { ClientType } from "../../types/event";
+import type { Client } from "../../types/event";
 import { FaPlus } from "react-icons/fa";
 
 interface Props {
-  clients: ClientType[];
-  handleClientClick: (client: ClientType) => void;
+  clients: Client[];
+  handleClientClick: (client: Client) => void;
 }
 
 export const ClientPick = ({ clients, handleClientClick }: Props) => {

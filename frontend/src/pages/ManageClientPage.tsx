@@ -1,11 +1,11 @@
 import { ClientHandler } from "../components/clients/ClientHandler";
 import { useParams, useSearchParams } from "react-router-dom";
-import { getClient } from "../api/reservations";
+import { getClient } from "../api/clients";
 import { useEffect, useState } from "react";
-import type { ClientType } from "../types/event";
+import type { Client } from "../types/event";
 
 interface Props {
-  allClients: ClientType[];
+  allClients: Client[];
 }
 
 export const ManageClientPage = ({ allClients }: Props) => {
@@ -19,7 +19,7 @@ export const ManageClientPage = ({ allClients }: Props) => {
     ? (typeParam as Type)
     : undefined;
 
-  const [client, setClient] = useState<ClientType>();
+  const [client, setClient] = useState<Client>();
 
   useEffect(() => {
     const fetchClient = async () => {

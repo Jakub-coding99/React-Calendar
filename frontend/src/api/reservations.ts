@@ -5,29 +5,7 @@ const apiURL = "http://localhost:8000/router/";
 export const fetchEvents = async () => {
   try {
     const res = await fetch(`${apiURL}load-events`);
-    if (!res.ok) throw new Error(`Chyba načítání událostí: ${res.status}`);
-    return await res.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const fetchClients = async () => {
-  try {
-    const res = await fetch(`${apiURL}get-clients`);
-    if (!res.ok) throw new Error(`Chyba načítání klientů: ${res.status}`);
-    return await res.json();
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-export const getClient = async (id: number) => {
-  try {
-    const res = await fetch(`${apiURL}get-client/${id}`);
-    if (!res.ok) throw new Error(`Chyba načítání klienta: ${res.status}`);
+    if (!res.ok) throw new Error(`Failed to load events: ${res.status}`);
     return await res.json();
   } catch (error) {
     console.error(error);
@@ -48,9 +26,7 @@ export const createEvent = async (data: EventType) => {
     const json = await res.json();
     console.log(json);
     if (!res.ok)
-      throw new Error(
-        json?.message || `Chyba vytváření události: ${res.status}`,
-      );
+      throw new Error(json?.message || `Failed to create event: ${res.status}`);
     return { status: json, ok: res.ok, data: json.data };
   } catch (error) {
     console.error(error);
@@ -70,7 +46,7 @@ export const editEvent = async (data: EventType) => {
     });
     const json = await res.json();
     if (!res.ok)
-      throw new Error(json?.message || `Chyba editace události: ${res.status}`);
+      throw new Error(json?.message || `Failed to edit event: ${res.status}`);
     return json;
   } catch (error) {
     console.error(error);
@@ -84,7 +60,7 @@ export const deleteEvent = async (id: number) => {
       method: "DELETE",
     });
     if (res.status === 204) return null;
-    if (!res.ok) throw new Error(`Chyba mazání události: ${res.status}`);
+    if (!res.ok) throw new Error(`Failed to delete event: ${res.status}`);
     return await res.json();
   } catch (error) {
     console.error(error);
