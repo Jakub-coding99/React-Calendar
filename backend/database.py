@@ -2,6 +2,8 @@ from sqlalchemy import create_engine,String,Boolean,DateTime
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,Session,sessionmaker
 from datetime import datetime as dt
 
+import os
+
 class Base(DeclarativeBase):
     pass
 
@@ -106,10 +108,13 @@ def fake_clients():
             session.add(clients)
         session.commit()
 
-
-
-sqlite_file_name = "reserv_database.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+sqlite_file_name = os.path.join(BASE_DIR, "reserv_database.db")
 sqlite_url = f"sqlite:///{sqlite_file_name}"
+
+
+# sqlite_file_name = "reserv_database.db"
+# sqlite_url = f"sqlite:///{sqlite_file_name}"
 engine = create_engine(sqlite_url, echo=True)
 SessionLocal = sessionmaker(autoflush=False,autocommit = False, bind=engine)
 

@@ -1,6 +1,6 @@
 from fastapi import APIRouter,Response,Depends
-from pydantic import BaseModel,field_validator
-from database import Reservation,Clients,get_db
+from pydantic import BaseModel,field_validator,ConfigDict
+from backend.database import Reservation,Clients,get_db
 from fastapi.exceptions import HTTPException
 from fastapi.responses import JSONResponse
 from datetime import datetime as dt
@@ -14,11 +14,6 @@ router = APIRouter()
 
 # source venv/bin/activate
 
-@field_validator("phone","work_type","note")
-def check(v):
-    if v == "":
-        return None
-    return v
 
 
 class ReservationModel(BaseModel):
@@ -30,25 +25,27 @@ class ReservationModel(BaseModel):
     note: str  | None
     msg_enabled: bool
     client_id: int
+    model_config = ConfigDict(from_attributes=True)
    
 
     
-    @field_validator("note")
+    @field_validator("note", mode="before")
     @classmethod
-    def check(cls,v):
+    def empty_to_none(cls, v):
         if v == "":
             return None
         return v
 
 
-    class Config:
-        from_attributes = True  
 class ClientsModel(BaseModel):
     id : str
     name : str
     phone: str | None
     email: str | None
     
+@router.get("/")
+def home():
+    return JSONResponse(content={"message":"Hello World"},status_code=200)
 
 @router.get("/load-events")
 def load_events(db: Session = Depends(get_db)):

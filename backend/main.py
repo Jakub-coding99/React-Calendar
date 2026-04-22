@@ -1,12 +1,14 @@
 
 from fastapi import FastAPI
-from server import router
-from database import create_db
+from backend.server import router
+from backend.database import create_db
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 
 #TEST
+
+# uvicorn backend.main:app --reload
 
 
 @asynccontextmanager
