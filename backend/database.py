@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine,String,Boolean,DateTime
+from sqlalchemy import create_engine,String,Boolean,DateTime,delete
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,Session,sessionmaker
 from datetime import datetime as dt
+
 
 import os
 
@@ -42,7 +43,9 @@ fake_data = [ {
     "msg_enabled": True,
     "state": "reserved",
     "location": "Office 101",
-    "color": "blue"
+    "color": "blue",
+    "client_id": "1"
+
 },
  {
     "id": 2,
@@ -55,8 +58,10 @@ fake_data = [ {
     "msg_enabled": True,
     "state": "confirmed",
     "location": "Cafeteria",
-    "color": "green"
-}]
+    "color": "green",
+    "client_id": "2"
+}
+]
 
 fake_clients_data = [{
     "id":1,
@@ -83,7 +88,7 @@ def populate_db():
             reservation = Reservation(
                 id=item["id"],
                 event=item["event"],
-                phone=item["phone"],
+                
                 start=item["start"],
                 end=item["end"],
                 note=item["note"],
@@ -91,7 +96,8 @@ def populate_db():
                 msg_enabled=item["msg_enabled"],
                 state=item["state"],
                 location=item["location"],
-                color=item["color"]
+                color=item["color"],
+                client_id = item["client_id"]
             )
             session.add(reservation)
         session.commit()
@@ -112,9 +118,6 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sqlite_file_name = os.path.join(BASE_DIR, "reserv_database.db")
 sqlite_url = f"sqlite:///{sqlite_file_name}"
 
-
-# sqlite_file_name = "reserv_database.db"
-# sqlite_url = f"sqlite:///{sqlite_file_name}"
 engine = create_engine(sqlite_url, echo=True)
 SessionLocal = sessionmaker(autoflush=False,autocommit = False, bind=engine)
 
@@ -123,11 +126,21 @@ def get_db():
     try:
         yield database
     finally:
+ 
         database.close()
 
+        
+def delete_rows():
+    db = SessionLocal()
+    try:
+        db.execute(
+            delete(Reservation).where(Reservation.id > 5)
+        )
+        db.commit()
+    finally:
+        db.close()
 
-
-def create_db():
+def create_db(engine):
     
     Base.metadata.create_all(engine)
     # populate_db()

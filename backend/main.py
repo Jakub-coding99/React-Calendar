@@ -1,26 +1,23 @@
 
 from fastapi import FastAPI
 from backend.server import router
-from backend.database import create_db
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+import backend.database as db
 
-
-#TEST
 
 # uvicorn backend.main:app --reload
 
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
-    create_db()
+    db.create_db(db.engine)
     yield
     
     
 
 app = FastAPI(lifespan=lifespan)
 origins = ["http://localhost:5173"]
-
 
 
 app.add_middleware(
@@ -30,7 +27,6 @@ app.add_middleware(
     allow_methods=["*"],    
     allow_headers=["*"]
 )
-
 
 
 
