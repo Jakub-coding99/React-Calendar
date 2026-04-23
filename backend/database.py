@@ -2,9 +2,6 @@ from sqlalchemy import create_engine,String,Boolean,DateTime,delete
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,Session,sessionmaker
 from datetime import datetime as dt
 
-
-import os
-
 class Base(DeclarativeBase):
     pass
 
@@ -30,6 +27,33 @@ class Clients(Base):
     phone: Mapped[str | None] = mapped_column(String(30))
     email: Mapped[str | None] = mapped_column(String(30))
     
+
+
+
+def init_db(db_url: str):
+    global engine, SessionLocal
+    engine = create_engine(db_url, echo=True)
+    SessionLocal = sessionmaker(autoflush=False, autocommit=False, bind=engine)
+
+
+
+def get_db():
+    if SessionLocal is None:
+        raise RuntimeError("SessionLocal is not initialized (should not be used in tests)")
+    database = SessionLocal()
+    try:
+        yield database
+    finally:
+        database.close()
+
+        
+
+def create_db(engine):
+    
+    Base.metadata.create_all(engine)
+    # populate_db()
+    # fake_clients()
+
 
    
 fake_data = [ {
@@ -114,35 +138,13 @@ def fake_clients():
             session.add(clients)
         session.commit()
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sqlite_file_name = os.path.join(BASE_DIR, "reserv_database.db")
-sqlite_url = f"sqlite:///{sqlite_file_name}"
-
-engine = create_engine(sqlite_url, echo=True)
-SessionLocal = sessionmaker(autoflush=False,autocommit = False, bind=engine)
-
-def get_db():
-    database = SessionLocal()
-    try:
-        yield database
-    finally:
- 
-        database.close()
-
-        
 def delete_rows():
     db = SessionLocal()
     try:
         db.execute(
-            delete(Reservation).where(Reservation.id > 5)
+            delete(Reservation).where(Reservation.id > 2)
         )
         db.commit()
     finally:
         db.close()
-
-def create_db(engine):
-    
-    Base.metadata.create_all(engine)
-    # populate_db()
-    # fake_clients()
 
